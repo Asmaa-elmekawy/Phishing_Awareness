@@ -10,8 +10,24 @@ const DashboardOverview = () => {
     const stats = [
         { title: 'Total Lessons', value: lessons.length, icon: <BookOpen className="text-cyber-primary" />, bgColor: 'bg-cyber-primary/10' },
         { title: 'Total Questions', value: questions.length, icon: <HelpCircle className="text-cyber-secondary" />, bgColor: 'bg-cyber-secondary/10' },
-        { title: 'Phish Scenarios', value: questions.filter(q => q.correctAnswer === 'IsPhish').length, icon: <ShieldAlert className="text-cyber-error" />, bgColor: 'bg-cyber-error/10' },
-        { title: 'Safe Scenarios', value: questions.filter(q => q.correctAnswer === 'Safe').length, icon: <CheckCircle className="text-cyber-success" />, bgColor: 'bg-cyber-success/10' },
+        {
+            title: 'Phish Scenarios',
+            value: questions.filter(q =>
+                (q.answers?.find(a => a.isCorrect)?.text === 'IsPhish') ||
+                (q.correctAnswer === 'IsPhish')
+            ).length,
+            icon: <ShieldAlert className="text-cyber-error" />,
+            bgColor: 'bg-cyber-error/10'
+        },
+        {
+            title: 'Safe Scenarios',
+            value: questions.filter(q =>
+                (q.answers?.find(a => a.isCorrect)?.text === 'Safe') ||
+                (q.correctAnswer === 'Safe')
+            ).length,
+            icon: <CheckCircle className="text-cyber-success" />,
+            bgColor: 'bg-cyber-success/10'
+        },
     ];
 
     return (

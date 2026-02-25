@@ -15,7 +15,7 @@ const QuestionsPage = () => {
     const [formData, setFormData] = useState({
         lessonId: '',
         scenario: '',
-        correctAnswer: 'IsPhish',
+        answers: [{ text: '', isCorrect: false }],
         explanation: ''
     });
 
@@ -28,10 +28,17 @@ const QuestionsPage = () => {
     const handleOpenModal = (question = null) => {
         if (question) {
             setEditingQuestion(question);
+
+            // Handle legacy structure or new structure
+            const answers = question.answers || [
+                { text: 'Safe', isCorrect: question.correctAnswer === 'Safe' },
+                { text: 'IsPhish', isCorrect: question.correctAnswer === 'IsPhish' }
+            ];
+
             setFormData({
                 lessonId: question.lessonId,
                 scenario: question.scenario,
-                correctAnswer: question.correctAnswer,
+                answers: answers,
                 explanation: question.explanation || ''
             });
         } else {
@@ -39,15 +46,55 @@ const QuestionsPage = () => {
             setFormData({
                 lessonId: lessons[0]?.id || '',
                 scenario: '',
-                correctAnswer: 'IsPhish',
+                answers: [{ text: '', isCorrect: true }],
                 explanation: ''
             });
         }
         setIsModalOpen(true);
     };
 
+    const handleAnswerChange = (index, value) => {
+        const newAnswers = [...formData.answers];
+        newAnswers[index].text = value;
+        setFormData({ ...formData, answers: newAnswers });
+    };
+
+    const handleCorrectChange = (index) => {
+        const newAnswers = formData.answers.map((ans, i) => ({
+            ...ans,
+            isCorrect: i === index
+        }));
+        setFormData({ ...formData, answers: newAnswers });
+    };
+
+    const addAnswerField = () => {
+        setFormData({
+            ...formData,
+            answers: [...formData.answers, { text: '', isCorrect: false }]
+        });
+    };
+
+    const removeAnswerField = (index) => {
+        if (formData.answers.length <= 1) return;
+        const newAnswers = formData.answers.filter((_, i) => i !== index);
+
+        // If we removed the correct answer, mark the first one as correct
+        if (!newAnswers.some(ans => ans.isCorrect)) {
+            newAnswers[0].isCorrect = true;
+        }
+
+        setFormData({ ...formData, answers: newAnswers });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Validation: Must have at least one answer and one correct answer
+        if (formData.answers.length === 0 || !formData.answers.some(a => a.isCorrect)) {
+            alert('Please add at least one answer and mark one as correct.');
+            return;
+        }
+
         if (editingQuestion) {
             updateQuestion(editingQuestion.id, formData);
         } else {
@@ -116,9 +163,9 @@ const QuestionsPage = () => {
                                 <div className="flex flex-col md:flex-row gap-6 items-start">
                                     <div className={`
                                         p-4 rounded-xl flex items-center justify-center transition-all
-                                        ${q.correctAnswer === 'IsPhish' ? 'bg-cyber-error/10 text-cyber-error' : 'bg-cyber-success/10 text-cyber-success'}
+                                        ${(q.answers?.find(a => a.isCorrect)?.text === 'IsPhish' || q.correctAnswer === 'IsPhish') ? 'bg-cyber-error/10 text-cyber-error' : 'bg-cyber-success/10 text-cyber-success'}
                                     `}>
-                                        {q.correctAnswer === 'IsPhish' ? <ShieldAlert size={28} /> : <CheckCircle size={28} />}
+                                        {(q.answers?.find(a => a.isCorrect)?.text === 'IsPhish' || q.correctAnswer === 'IsPhish') ? <ShieldAlert size={28} /> : <CheckCircle size={28} />}
                                     </div>
 
                                     <div className="flex-1 min-w-0">
@@ -132,6 +179,18 @@ const QuestionsPage = () => {
                                             </div>
                                         </div>
                                         <p className="font-bold text-lg mb-3 leading-relaxed">{q.scenario}</p>
+
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            {(q.answers || []).map((ans, i) => (
+                                                <div
+                                                    key={i}
+                                                    className={`px-3 py-1 rounded-lg text-xs border ${ans.isCorrect ? 'bg-cyber-primary/20 border-cyber-primary text-cyber-primary font-bold' : 'bg-cyber-surface-alt border-cyber-border text-cyber-text-muted'}`}
+                                                >
+                                                    {ans.text}
+                                                </div>
+                                            ))}
+                                        </div>
+
                                         {q.explanation && (
                                             <div className="p-3 rounded-lg bg-cyber-bg/50 border border-cyber-border italic text-sm text-cyber-text-muted">
                                                 <span className="font-bold not-italic text-cyber-text">Explanation: </span> {q.explanation}
@@ -141,9 +200,9 @@ const QuestionsPage = () => {
 
                                     <div className={`
                                         px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-tighter self-start md:self-center
-                                        ${q.correctAnswer === 'IsPhish' ? 'bg-cyber-error/20 text-cyber-error' : 'bg-cyber-success/20 text-cyber-success'}
+                                        ${(q.answers?.find(a => a.isCorrect)?.text === 'IsPhish' || q.correctAnswer === 'IsPhish') ? 'bg-cyber-error/20 text-cyber-error' : 'bg-cyber-success/20 text-cyber-success'}
                                     `}>
-                                        {q.correctAnswer}
+                                        {q.answers?.find(a => a.isCorrect)?.text || q.correctAnswer}
                                     </div>
                                 </div>
                             </Card>
@@ -192,24 +251,58 @@ const QuestionsPage = () => {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-cyber-text-muted mb-2">Correct Answer</label>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            {['Safe', 'IsPhish'].map(option => (
-                                                <button
-                                                    key={option}
-                                                    type="button"
-                                                    onClick={() => setFormData({ ...formData, correctAnswer: option })}
-                                                    className={`
-                                                        py-2.5 rounded-lg border font-bold text-sm transition-all
-                                                        ${formData.correctAnswer === option
-                                                            ? 'bg-cyber-primary border-cyber-primary text-white shadow-lg shadow-cyber-primary/30'
-                                                            : 'bg-cyber-bg border-cyber-border text-cyber-text-muted hover:border-cyber-primary/50'}
-                                                    `}
-                                                >
-                                                    {option}
-                                                </button>
+                                        <div className="flex justify-between items-center mb-4">
+                                            <label className="text-sm font-medium text-cyber-text-muted">Answers & Scenarios</label>
+                                            <button
+                                                type="button"
+                                                onClick={addAnswerField}
+                                                className="text-xs font-bold text-cyber-primary hover:text-cyber-primary/80 flex items-center gap-1 transition-colors"
+                                            >
+                                                <Plus size={14} /> Add Answer
+                                            </button>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            {formData.answers.map((answer, index) => (
+                                                <div key={index} className="flex gap-3 items-start animate-in fade-in slide-in-from-left-2 duration-300">
+                                                    <div className="flex-1 relative">
+                                                        <input
+                                                            type="text"
+                                                            value={answer.text}
+                                                            onChange={(e) => handleAnswerChange(index, e.target.value)}
+                                                            required
+                                                            placeholder={`Answer Option ${index + 1}`}
+                                                            className={`input-field pl-10 h-11 ${answer.isCorrect ? 'border-cyber-primary shadow-[0_0_10px_rgba(59,130,246,0.1)]' : ''}`}
+                                                        />
+                                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
+                                                            <input
+                                                                type="radio"
+                                                                name="correctAnswer"
+                                                                checked={answer.isCorrect}
+                                                                onChange={() => handleCorrectChange(index)}
+                                                                className="w-4 h-4 accent-cyber-primary cursor-pointer"
+                                                                title="Mark as correct answer"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    {formData.answers.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeAnswerField(index)}
+                                                            className="p-3 rounded-lg border border-cyber-border text-cyber-text-muted hover:text-cyber-error hover:border-cyber-error/30 transition-all bg-cyber-bg"
+                                                        >
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    )}
+                                                </div>
                                             ))}
                                         </div>
+                                        {formData.answers.some(a => a.isCorrect) && (
+                                            <p className="text-[10px] text-cyber-primary mt-3 font-bold uppercase tracking-wider">
+                                                ✓ The selected answer will be marked as correct
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
