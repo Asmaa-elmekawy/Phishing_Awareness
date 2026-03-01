@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { Plus, Edit2, Trash2, Search, BookOpen, X } from 'lucide-react';
-import { useData } from '../../context/DataContext';
 import Card from './components/common/Card';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 
-const LessonsPage = () => {
-    const { lessons, questions, addLesson, updateLesson, deleteLesson } = useData();
+const LessonsPage = ({ lessons, setLessons, questions, setQuestions }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingLesson, setEditingLesson] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
     // Form State
-    const [formData, setFormData] = useState({ title: '', description: '' });
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        orderNumber: 0,
+        difficultyLevel: ''
+    });
 
     const filteredLessons = lessons.filter(lesson =>
         lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -21,10 +24,20 @@ const LessonsPage = () => {
     const handleOpenModal = (lesson = null) => {
         if (lesson) {
             setEditingLesson(lesson);
-            setFormData({ title: lesson.title, description: lesson.description });
+            setFormData({
+                title: lesson.title ?? '',
+                description: lesson.description ?? '',
+                orderNumber: Number.isFinite(lesson.orderNumber) ? lesson.orderNumber : Number(lesson.orderNumber ?? 0),
+                difficultyLevel: lesson.difficultyLevel ?? ''
+            });
         } else {
             setEditingLesson(null);
-            setFormData({ title: '', description: '' });
+            setFormData({
+                title: '',
+                description: '',
+                orderNumber: 0,
+                difficultyLevel: ''
+            });
         }
         setIsModalOpen(true);
     };
@@ -32,16 +45,18 @@ const LessonsPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (editingLesson) {
-            updateLesson(editingLesson.id, formData);
+            setLessons(prev => prev.map(l => l.id === editingLesson.id ? { ...l, ...formData } : l));
         } else {
-            addLesson(formData);
+            const newLesson = { id: (globalThis.crypto?.randomUUID?.() ?? Date.now().toString()), ...formData };
+            setLessons(prev => [...prev, newLesson]);
         }
         setIsModalOpen(false);
     };
 
     const handleDelete = (id) => {
         if (window.confirm('Are you sure you want to delete this lesson? All associated questions will also be deleted.')) {
-            deleteLesson(id);
+            setLessons(prev => prev.filter(l => l.id !== id));
+            setQuestions(prev => prev.filter(q => q.lessonId !== id));
         }
     };
 
@@ -75,7 +90,7 @@ const LessonsPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 <AnimatePresence>
                     {filteredLessons.map((lesson) => (
-                        <motion.div
+                        <Motion.div
                             key={lesson.id}
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -116,7 +131,7 @@ const LessonsPage = () => {
                                     </div>
                                 </div>
                             </Card>
-                        </motion.div>
+                        </Motion.div>
                     ))}
                 </AnimatePresence>
             </div>
@@ -125,7 +140,7 @@ const LessonsPage = () => {
             <AnimatePresence>
                 {isModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-cyber-bg/80 backdrop-blur-sm">
-                        <motion.div
+                        <Motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -157,6 +172,32 @@ const LessonsPage = () => {
                                     />
                                 </div>
 
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-cyber-text-muted mb-2">Order Number</label>
+                                        <input
+                                            type="number"
+                                            value={formData.orderNumber}
+                                            onChange={(e) => setFormData({ ...formData, orderNumber: Number(e.target.value) })}
+                                            required
+                                            min={0}
+                                            className="input-field focus:ring-2 focus:ring-cyber-primary/20 h-11"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-cyber-text-muted mb-2">Difficulty Level</label>
+                                        <input
+                                            type="text"
+                                            value={formData.difficultyLevel}
+                                            onChange={(e) => setFormData({ ...formData, difficultyLevel: e.target.value })}
+                                            required
+                                            placeholder="e.g. Beginner"
+                                            className="input-field focus:ring-2 focus:ring-cyber-primary/20 h-11"
+                                        />
+                                    </div>
+                                </div>
+
                                 <div>
                                     <label className="block text-sm font-medium text-cyber-text-muted mb-2">Description</label>
                                     <textarea
@@ -185,7 +226,7 @@ const LessonsPage = () => {
                                     </button>
                                 </div>
                             </form>
-                        </motion.div>
+                        </Motion.div>
                     </div>
                 )}
             </AnimatePresence>

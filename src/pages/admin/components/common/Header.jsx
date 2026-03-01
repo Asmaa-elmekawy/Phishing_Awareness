@@ -1,10 +1,7 @@
 import React from 'react';
 import { User, Bell, Search } from 'lucide-react';
-import { useAuth } from '../../../../context/AuthContext';
 
 const Header = () => {
-    const { user } = useAuth();
-
     return (
         <header className="h-16 bg-cyber-surface border-bottom border-cyber-border flex items-center justify-between px-8 sticky top-0 z-10">
             <div className="relative w-80">
@@ -24,7 +21,7 @@ const Header = () => {
 
                 <div className="flex items-center gap-4 border-l border-cyber-border pl-6">
                     <div className="text-right">
-                        <p className="text-sm font-semibold">{user?.email?.split('@')[0] || 'Admin'}</p>
+                        <p className="text-sm font-semibold">Admin</p>
                         <p className="text-xs text-cyber-text-muted">Super Admin</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-cyber-primary flex items-center justify-center text-white">

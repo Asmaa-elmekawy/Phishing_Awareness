@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { DataProvider } from './context/DataContext';
 import Login from './pages/admin/Login';
+import Register from './pages/admin/Register';
 import DashboardOverview from './pages/admin/DashboardOverview';
 import Home from './pages/Home';
 
@@ -13,16 +12,8 @@ import LessonsPage from './pages/admin/LessonsPage';
 import QuestionsPage from './pages/admin/QuestionsPage';
 
 const ProtectedRoute = ({ children }) => {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) return (
-    <div className="min-h-screen flex items-center justify-center bg-cyber-bg">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyber-primary"></div>
-    </div>
-  );
-
-  if (!user) return <Navigate to="/login" />;
-
+  // Auth is intentionally not wired until backend integration.
+  // Keep the routing + layout structure unchanged.
   return children;
 };
 
@@ -41,51 +32,61 @@ const MainLayout = ({ children }) => {
 };
 
 function App() {
+  const [lessons, setLessons] = useState([]);
+  const [questions, setQuestions] = useState([]);
+
   return (
-    <AuthProvider>
-      <DataProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin/register" element={<Register />} />
 
-            {/* Admin Routes */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <DashboardOverview />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/lessons"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <LessonsPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/questions"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <QuestionsPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
+        {/* Admin Routes */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <DashboardOverview lessons={lessons} questions={questions} />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/lessons"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <LessonsPage
+                  lessons={lessons}
+                  setLessons={setLessons}
+                  questions={questions}
+                  setQuestions={setQuestions}
+                />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/questions"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <QuestionsPage
+                  lessons={lessons}
+                  setLessons={setLessons}
+                  questions={questions}
+                  setQuestions={setQuestions}
+                />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
 
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </Router>
-      </DataProvider>
-    </AuthProvider>
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
 }
 

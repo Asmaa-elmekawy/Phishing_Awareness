@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
 import { Plus, Edit2, Trash2, Search, HelpCircle, ShieldAlert, CheckCircle, X } from 'lucide-react';
-import { useData } from '../../context/DataContext';
 import Card from './components/common/Card';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 
-const QuestionsPage = () => {
-    const { lessons, questions, addQuestion, updateQuestion, deleteQuestion } = useData();
+const emptyQuestionModel = {
+    questionText: '',
+    questionContent: '',
+    questionType: '',
+    answers: [
+        {
+            answerText: '',
+            isCorrect: false
+        }
+    ]
+};
+
+const QuestionsPage = ({ lessons, questions, setQuestions }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingQuestion, setEditingQuestion] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedLesson, setSelectedLesson] = useState('all');
+    const [associatedLessonId, setAssociatedLessonId] = useState('');
 
     // Form State
-    const [formData, setFormData] = useState({
-        lessonId: '',
-        scenario: '',
-        answers: [{ text: '', isCorrect: false }],
-        explanation: ''
-    });
+    const [formData, setFormData] = useState(emptyQuestionModel);
 
     const filteredQuestions = questions.filter(q => {
-        const matchesSearch = q.scenario.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = (q.questionText || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesLesson = selectedLesson === 'all' || q.lessonId === selectedLesson;
         return matchesSearch && matchesLesson;
     });
@@ -28,26 +34,24 @@ const QuestionsPage = () => {
     const handleOpenModal = (question = null) => {
         if (question) {
             setEditingQuestion(question);
-
-            // Handle legacy structure or new structure
-            const answers = question.answers || [
-                { text: 'Safe', isCorrect: question.correctAnswer === 'Safe' },
-                { text: 'IsPhish', isCorrect: question.correctAnswer === 'IsPhish' }
-            ];
-
+            setAssociatedLessonId(question.lessonId || '');
             setFormData({
-                lessonId: question.lessonId,
-                scenario: question.scenario,
-                answers: answers,
-                explanation: question.explanation || ''
+                questionText: question.questionText ?? '',
+                questionContent: question.questionContent ?? '',
+                questionType: question.questionType ?? '',
+                answers: (question.answers?.length ? question.answers : emptyQuestionModel.answers).map(a => ({
+                    answerText: a.answerText ?? '',
+                    isCorrect: Boolean(a.isCorrect)
+                }))
             });
         } else {
             setEditingQuestion(null);
+            setAssociatedLessonId(lessons[0]?.id || '');
             setFormData({
-                lessonId: lessons[0]?.id || '',
-                scenario: '',
-                answers: [{ text: '', isCorrect: true }],
-                explanation: ''
+                questionText: '',
+                questionContent: '',
+                questionType: '',
+                answers: [{ answerText: '', isCorrect: true }]
             });
         }
         setIsModalOpen(true);
@@ -55,7 +59,7 @@ const QuestionsPage = () => {
 
     const handleAnswerChange = (index, value) => {
         const newAnswers = [...formData.answers];
-        newAnswers[index].text = value;
+        newAnswers[index].answerText = value;
         setFormData({ ...formData, answers: newAnswers });
     };
 
@@ -70,7 +74,7 @@ const QuestionsPage = () => {
     const addAnswerField = () => {
         setFormData({
             ...formData,
-            answers: [...formData.answers, { text: '', isCorrect: false }]
+            answers: [...formData.answers, { answerText: '', isCorrect: false }]
         });
     };
 
@@ -96,16 +100,25 @@ const QuestionsPage = () => {
         }
 
         if (editingQuestion) {
-            updateQuestion(editingQuestion.id, formData);
+            setQuestions(prev => prev.map(q => (
+                q.id === editingQuestion.id
+                    ? { ...q, ...formData, lessonId: associatedLessonId }
+                    : q
+            )));
         } else {
-            addQuestion(formData);
+            const newQuestion = {
+                id: (globalThis.crypto?.randomUUID?.() ?? Date.now().toString()),
+                lessonId: associatedLessonId,
+                ...formData
+            };
+            setQuestions(prev => [...prev, newQuestion]);
         }
         setIsModalOpen(false);
     };
 
     const handleDelete = (id) => {
         if (window.confirm('Are you sure you want to delete this question?')) {
-            deleteQuestion(id);
+            setQuestions(prev => prev.filter(q => q.id !== id));
         }
     };
 
@@ -152,7 +165,7 @@ const QuestionsPage = () => {
             <div className="space-y-4">
                 <AnimatePresence>
                     {filteredQuestions.map((q) => (
-                        <motion.div
+                        <Motion.div
                             key={q.id}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -163,9 +176,9 @@ const QuestionsPage = () => {
                                 <div className="flex flex-col md:flex-row gap-6 items-start">
                                     <div className={`
                                         p-4 rounded-xl flex items-center justify-center transition-all
-                                        ${(q.answers?.find(a => a.isCorrect)?.text === 'IsPhish' || q.correctAnswer === 'IsPhish') ? 'bg-cyber-error/10 text-cyber-error' : 'bg-cyber-success/10 text-cyber-success'}
+                                        ${(q.answers?.find(a => a.isCorrect)?.answerText === 'IsPhish') ? 'bg-cyber-error/10 text-cyber-error' : 'bg-cyber-success/10 text-cyber-success'}
                                     `}>
-                                        {(q.answers?.find(a => a.isCorrect)?.text === 'IsPhish' || q.correctAnswer === 'IsPhish') ? <ShieldAlert size={28} /> : <CheckCircle size={28} />}
+                                        {(q.answers?.find(a => a.isCorrect)?.answerText === 'IsPhish') ? <ShieldAlert size={28} /> : <CheckCircle size={28} />}
                                     </div>
 
                                     <div className="flex-1 min-w-0">
@@ -178,7 +191,7 @@ const QuestionsPage = () => {
                                                 <button onClick={() => handleDelete(q.id)} className="text-cyber-text-muted hover:text-cyber-error"><Trash2 size={16} /></button>
                                             </div>
                                         </div>
-                                        <p className="font-bold text-lg mb-3 leading-relaxed">{q.scenario}</p>
+                                        <p className="font-bold text-lg mb-3 leading-relaxed">{q.questionText}</p>
 
                                         <div className="flex flex-wrap gap-2 mb-4">
                                             {(q.answers || []).map((ans, i) => (
@@ -186,27 +199,27 @@ const QuestionsPage = () => {
                                                     key={i}
                                                     className={`px-3 py-1 rounded-lg text-xs border ${ans.isCorrect ? 'bg-cyber-primary/20 border-cyber-primary text-cyber-primary font-bold' : 'bg-cyber-surface-alt border-cyber-border text-cyber-text-muted'}`}
                                                 >
-                                                    {ans.text}
+                                                    {ans.answerText}
                                                 </div>
                                             ))}
                                         </div>
 
-                                        {q.explanation && (
+                                        {q.questionContent && (
                                             <div className="p-3 rounded-lg bg-cyber-bg/50 border border-cyber-border italic text-sm text-cyber-text-muted">
-                                                <span className="font-bold not-italic text-cyber-text">Explanation: </span> {q.explanation}
+                                                <span className="font-bold not-italic text-cyber-text">Explanation: </span> {q.questionContent}
                                             </div>
                                         )}
                                     </div>
 
                                     <div className={`
                                         px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-tighter self-start md:self-center
-                                        ${(q.answers?.find(a => a.isCorrect)?.text === 'IsPhish' || q.correctAnswer === 'IsPhish') ? 'bg-cyber-error/20 text-cyber-error' : 'bg-cyber-success/20 text-cyber-success'}
+                                        ${(q.answers?.find(a => a.isCorrect)?.answerText === 'IsPhish') ? 'bg-cyber-error/20 text-cyber-error' : 'bg-cyber-success/20 text-cyber-success'}
                                     `}>
-                                        {q.answers?.find(a => a.isCorrect)?.text || q.correctAnswer}
+                                        {q.answers?.find(a => a.isCorrect)?.answerText}
                                     </div>
                                 </div>
                             </Card>
-                        </motion.div>
+                        </Motion.div>
                     ))}
                 </AnimatePresence>
             </div>
@@ -215,7 +228,7 @@ const QuestionsPage = () => {
             <AnimatePresence>
                 {isModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-cyber-bg/80 backdrop-blur-sm">
-                        <motion.div
+                        <Motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -239,8 +252,8 @@ const QuestionsPage = () => {
                                     <div>
                                         <label className="block text-sm font-medium text-cyber-text-muted mb-2">Associated Lesson</label>
                                         <select
-                                            value={formData.lessonId}
-                                            onChange={(e) => setFormData({ ...formData, lessonId: e.target.value })}
+                                            value={associatedLessonId}
+                                            onChange={(e) => setAssociatedLessonId(e.target.value)}
                                             required
                                             className="input-field h-11 cursor-pointer"
                                         >
@@ -248,6 +261,16 @@ const QuestionsPage = () => {
                                                 <option key={l.id} value={l.id}>{l.title}</option>
                                             ))}
                                         </select>
+
+                                        <label className="block text-sm font-medium text-cyber-text-muted mb-2 mt-6">Question Type</label>
+                                        <input
+                                            type="text"
+                                            value={formData.questionType}
+                                            onChange={(e) => setFormData({ ...formData, questionType: e.target.value })}
+                                            required
+                                            placeholder="e.g. multiple_choice"
+                                            className="input-field h-11"
+                                        />
                                     </div>
 
                                     <div>
@@ -268,7 +291,7 @@ const QuestionsPage = () => {
                                                     <div className="flex-1 relative">
                                                         <input
                                                             type="text"
-                                                            value={answer.text}
+                                                            value={answer.answerText}
                                                             onChange={(e) => handleAnswerChange(index, e.target.value)}
                                                             required
                                                             placeholder={`Answer Option ${index + 1}`}
@@ -309,8 +332,8 @@ const QuestionsPage = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-cyber-text-muted mb-2">Scenario Description</label>
                                     <textarea
-                                        value={formData.scenario}
-                                        onChange={(e) => setFormData({ ...formData, scenario: e.target.value })}
+                                        value={formData.questionText}
+                                        onChange={(e) => setFormData({ ...formData, questionText: e.target.value })}
                                         required
                                         rows={3}
                                         placeholder="e.g. Email from HR asking to click a link to view salary..."
@@ -321,8 +344,8 @@ const QuestionsPage = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-cyber-text-muted mb-2">Explanation (Optional)</label>
                                     <textarea
-                                        value={formData.explanation}
-                                        onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
+                                        value={formData.questionContent}
+                                        onChange={(e) => setFormData({ ...formData, questionContent: e.target.value })}
                                         rows={3}
                                         placeholder="Explain why this is Phish or Safe..."
                                         className="input-field resize-none py-3"
@@ -345,7 +368,7 @@ const QuestionsPage = () => {
                                     </button>
                                 </div>
                             </form>
-                        </motion.div>
+                        </Motion.div>
                     </div>
                 )}
             </AnimatePresence>

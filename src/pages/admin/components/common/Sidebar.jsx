@@ -1,10 +1,9 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, HelpCircle, LogOut, ShieldCheck } from 'lucide-react';
-import { useAuth } from '../../../../context/AuthContext';
 
 const Sidebar = () => {
-    const { logout } = useAuth();
+    const navigate = useNavigate();
 
     const navItems = [
         { name: 'Overview', icon: <LayoutDashboard size={20} />, path: '/admin' },
@@ -41,7 +40,7 @@ const Sidebar = () => {
             </nav>
 
             <button
-                onClick={logout}
+                onClick={() => navigate('/login')}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-cyber-text-muted hover:bg-cyber-error/10 hover:text-cyber-error transition-all mt-auto group"
             >
                 <LogOut size={20} className="group-hover:translate-x-1 transition-transform" />

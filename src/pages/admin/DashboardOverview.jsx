@@ -1,11 +1,9 @@
 import React from 'react';
 import { BookOpen, HelpCircle, ShieldAlert, CheckCircle } from 'lucide-react';
-import { useData } from '../../context/DataContext';
 import Card from './components/common/Card';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 
-const DashboardOverview = () => {
-    const { lessons, questions } = useData();
+const DashboardOverview = ({ lessons, questions }) => {
 
     const stats = [
         { title: 'Total Lessons', value: lessons.length, icon: <BookOpen className="text-cyber-primary" />, bgColor: 'bg-cyber-primary/10' },
@@ -13,8 +11,7 @@ const DashboardOverview = () => {
         {
             title: 'Phish Scenarios',
             value: questions.filter(q =>
-                (q.answers?.find(a => a.isCorrect)?.text === 'IsPhish') ||
-                (q.correctAnswer === 'IsPhish')
+                (q.answers?.find(a => a.isCorrect)?.answerText === 'IsPhish')
             ).length,
             icon: <ShieldAlert className="text-cyber-error" />,
             bgColor: 'bg-cyber-error/10'
@@ -22,8 +19,7 @@ const DashboardOverview = () => {
         {
             title: 'Safe Scenarios',
             value: questions.filter(q =>
-                (q.answers?.find(a => a.isCorrect)?.text === 'Safe') ||
-                (q.correctAnswer === 'Safe')
+                (q.answers?.find(a => a.isCorrect)?.answerText === 'Safe')
             ).length,
             icon: <CheckCircle className="text-cyber-success" />,
             bgColor: 'bg-cyber-success/10'
@@ -39,7 +35,7 @@ const DashboardOverview = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, index) => (
-                    <motion.div
+                    <Motion.div
                         key={stat.title}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -56,7 +52,7 @@ const DashboardOverview = () => {
                                 </div>
                             </div>
                         </Card>
-                    </motion.div>
+                    </Motion.div>
                 ))}
             </div>
 
