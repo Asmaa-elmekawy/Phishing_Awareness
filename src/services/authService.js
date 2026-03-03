@@ -19,7 +19,7 @@ class AuthService {
     }
   }
 
-  // 2. تحديث التوكن - POST /Auth/refreshToken
+  // 2. POST /Auth/refreshToken
   async refreshToken() {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
@@ -37,7 +37,7 @@ class AuthService {
     }
   }
 
-  // 3. إلغاء التوكن - POST /Auth/revoke-refreshToken
+  // 3.  POST /Auth/revoke-refreshToken
   async revokeRefreshToken() {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
@@ -54,7 +54,7 @@ class AuthService {
     }
   }
 
-  // 4. تسجيل مستخدم جديد - POST /Auth/register
+  // 4. POST /Auth/register
   async register(userData) {
     try {
       const response = await axiosInstance.post("/Auth/register", userData);
@@ -64,7 +64,7 @@ class AuthService {
     }
   }
 
-  // 5. تأكيد الإيميل (POST) - POST /Auth/confirm-email
+  // 5. POST /Auth/confirm-email
   async confirmEmailPost(token) {
     try {
       const response = await axiosInstance.post("/Auth/confirm-email", {
@@ -76,7 +76,7 @@ class AuthService {
     }
   }
 
-  // 6. تأكيد الإيميل (GET) - GET /Auth/confirm-email
+  // 6.  GET /Auth/confirm-email
   async confirmEmailGet(token) {
     try {
       const response = await axiosInstance.get(
@@ -88,7 +88,7 @@ class AuthService {
     }
   }
 
-  // 7. إعادة إرسال تأكيد الإيميل - POST /Auth/resend-confirmation-email
+  // 7.  POST /Auth/resend-confirmation-email
   async resendConfirmationEmail(email) {
     try {
       const response = await axiosInstance.post(
@@ -103,7 +103,7 @@ class AuthService {
     }
   }
 
-  // 8. نسيت كلمة المرور - POST /Auth/forget-password
+  // 8. POST /Auth/forget-password
   async forgetPassword(email) {
     try {
       const response = await axiosInstance.post("/Auth/forget-password", {
@@ -115,7 +115,7 @@ class AuthService {
     }
   }
 
-  // 9. إعادة تعيين كلمة المرور - POST /Auth/reset-password
+  // POST /Auth/reset-password
   async resetPassword(token, newPassword) {
     try {
       const response = await axiosInstance.post("/Auth/reset-password", {
@@ -128,7 +128,7 @@ class AuthService {
     }
   }
 
-  // دالة للتعامل مع الأخطاء
+  //  للتعامل مع الأخطاء
   handleError(error) {
     if (error.response) {
       // خطأ من السيرفر
@@ -152,7 +152,6 @@ class AuthService {
     }
   }
 
-  // دالة تسجيل الخروج
   logout() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");

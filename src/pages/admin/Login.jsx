@@ -29,7 +29,7 @@ const Login = () => {
             console.log('Login successful:', response);
             
             // توجيه المستخدم للصفحة الرئيسية بعد نجاح تسجيل الدخول
-            window.location.href = '/dashboard'; // أو useNavigate لو بتستخدمي React Router
+            window.location.href = '/admin'; 
             
         } catch (err) {
             // الأخطاء بتتعالج تلقائياً في الهوك
