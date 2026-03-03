@@ -5,6 +5,7 @@ import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useLessons } from "../../hooks/useLessons";
 import { useQuestions } from "../../hooks/useQuestions";
 import LessonModal from "./components/common/LessonModal";
+import DeleteConfirmModal from "./components/common/DeleteConfirmModal";
 
 const LessonsPage = () => {
   const {
@@ -20,6 +21,11 @@ const LessonsPage = () => {
   const { questions, fetchQuestions } = useQuestions();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingLesson, setDeletingLesson] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   const [editingLesson, setEditingLesson] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [localError, setLocalError] = useState("");
@@ -76,6 +82,31 @@ const LessonsPage = () => {
     setLocalError("");
   };
 
+  const handleOpenDeleteModal = (lesson) => {
+    setDeletingLesson(lesson);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeletingLesson(null);
+    setDeleteLoading(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingLesson) return;
+
+    setDeleteLoading(true);
+    try {
+      await deleteLesson(deletingLesson.lessonId);
+      handleCloseDeleteModal();
+    } catch (err) {
+      console.error("Failed to delete:", err);
+      setLocalError(err.message || "فشل في حذف الدرس");
+      handleCloseDeleteModal();
+    }
+  };
+
   //  الفورم (إضافة أو تعديل)
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,21 +147,6 @@ const LessonsPage = () => {
     } catch (err) {
       console.error(" Error saving lesson:", err);
       setLocalError(err.message || "فشل في حفظ الدرس");
-    }
-  };
-
-  // حذف درس
-  const handleDelete = async (lessonId) => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this lesson? All associated questions will also be deleted.",
-      )
-    ) {
-      try {
-        await deleteLesson(lessonId);
-      } catch (err) {
-        console.error("فشل في حذف الدرس:", err);
-      }
     }
   };
 
@@ -205,7 +221,7 @@ const LessonsPage = () => {
                       <Edit2 size={16} /> Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(lesson.lessonId)}
+                      onClick={() => handleOpenDeleteModal(lesson)}
                       className="text-cyber-text-muted hover:text-cyber-error flex items-center gap-1.5 text-sm font-medium transition-colors"
                       disabled={loading}
                     >
@@ -254,6 +270,16 @@ const LessonsPage = () => {
         editingLesson={editingLesson}
         loading={loading}
         localError={localError}
+      />
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        title="Delete Lesson"
+        message="Are you sure you want to delete this lesson? All associated questions will also be deleted."
+        itemName={deletingLesson?.title}
+        loading={deleteLoading}
       />
     </div>
   );
