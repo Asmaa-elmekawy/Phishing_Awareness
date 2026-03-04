@@ -6,17 +6,19 @@ import {
   Search,
   ShieldAlert,
   CheckCircle,
-  X,
+  QuoteIcon,
 } from "lucide-react";
 import Card from "./components/common/Card";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useQuestions } from "../../hooks/useQuestions";
 import { useLessons } from "../../hooks/useLessons";
+import QuestionModal from "./components/common/QuestionModal";
+import DeleteConfirmModal from "./components/common/DeleteConfirmModal";
 
 const emptyQuestionModel = {
   questionText: "",
   questionContent: "",
-  questionType: "Email",
+  questionType: "",
   answers: [
     {
       answerText: "",
@@ -45,6 +47,10 @@ const QuestionsPage = () => {
   const [associatedLessonId, setAssociatedLessonId] = useState("");
   const [localError, setLocalError] = useState("");
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingQuestion, setDeletingQuestion] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   const [formData, setFormData] = useState(emptyQuestionModel);
 
   // نجيب الدروس أول ما الصفحة تتحمل
@@ -59,13 +65,15 @@ const QuestionsPage = () => {
     }
   }, [selectedLesson]);
 
-  // تصفية الأسئلة
+  // تصفية الأسئلة (ولا نعرض أي أسئلة لو اختار "All")
   const filteredQuestions = questions.filter((q) => {
     const matchesSearch = (q.questionText || "")
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
+  const displayQuestions =
+    selectedLesson === "all" ? [] : filteredQuestions;
 
   const handleOpenModal = (question = null) => {
     if (question) {
@@ -74,7 +82,7 @@ const QuestionsPage = () => {
       setFormData({
         questionText: question.questionText || "",
         questionContent: question.questionContent || "",
-        questionType: question.questionType || "Email",
+        questionType: question.questionType || "",
         answers: question.answers?.length
           ? question.answers.map((a) => ({
               answerText: a.answerText || "",
@@ -90,12 +98,43 @@ const QuestionsPage = () => {
       setFormData({
         questionText: "",
         questionContent: "",
-        questionType: "Email",
+        questionType: "",
         answers: [{ answerText: "", isCorrect: false }],
       });
     }
     setIsModalOpen(true);
     setLocalError("");
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingQuestion(null);
+    setLocalError("");
+  };
+
+  const handleOpenDeleteModal = (question) => {
+    setDeletingQuestion(question);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeletingQuestion(null);
+    setDeleteLoading(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingQuestion) return;
+
+    setDeleteLoading(true);
+    try {
+      await deleteQuestion(deletingQuestion.lessonId, deletingQuestion.questionId);
+      handleCloseDeleteModal();
+    } catch (err) {
+      console.error("Failed to delete:", err);
+      setLocalError(err.message || "Failed to delete question");
+      handleCloseDeleteModal();
+    }
   };
 
   // التعامل مع الإجابات
@@ -181,7 +220,7 @@ const QuestionsPage = () => {
       if (editingQuestion) {
         await updateQuestion(
           associatedLessonId,
-          editingQuestion.id,
+          editingQuestion.questionId,
           questionData,
         );
       } else {
@@ -191,30 +230,6 @@ const QuestionsPage = () => {
     } catch (err) {
       setLocalError(err.message || "Failed to save question");
     }
-  };
-
-  const handleDelete = async (questionId) => {
-    if (!selectedLesson || selectedLesson === "all") {
-      alert("Please select a specific lesson to delete questions");
-      return;
-    }
-
-    if (window.confirm("Are you sure you want to delete this question?")) {
-      try {
-        await deleteQuestion(selectedLesson, questionId);
-      } catch (err) {
-        console.error("Failed to delete question:", err);
-      }
-    }
-  };
-
-  // دالة لمعرفة نوع السؤال (Phish أو Safe) من الإجابة الصحيحة
-  const getQuestionType = (question) => {
-    const correctAnswer =
-      question.answers?.find((a) => a.isCorrect)?.answerText || "";
-    if (correctAnswer.toLowerCase().includes("phish")) return "phish";
-    if (correctAnswer.toLowerCase().includes("safe")) return "safe";
-    return "unknown";
   };
 
   const loading = questionsLoading || lessonsLoading;
@@ -279,7 +294,7 @@ const QuestionsPage = () => {
         >
           <option value="all">All Lessons</option>
           {lessons.map((l) => (
-            <option key={l.id} value={l.id}>
+            <option key={l.lessonId} value={l.lessonId}>
               {l.title}
             </option>
           ))}
@@ -297,35 +312,27 @@ const QuestionsPage = () => {
 
       <div className="space-y-4">
         <AnimatePresence>
-          {filteredQuestions.map((q) => {
-            const questionType = getQuestionType(q);
-            return (
+          {displayQuestions.length > 0 ? (
+            displayQuestions.map((q) => (
               <Motion.div
-                key={q.id}
+                key={q.questionId}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
+                // exit={{ opacity: 0, x: 20 }}
                 layout
               >
                 <Card className="hover:border-cyber-primary/20 transition-all">
                   <div className="flex flex-col md:flex-row gap-6 items-start">
                     <div
-                      className={`
-                                            p-4 rounded-xl flex items-center justify-center transition-all
-                                            ${questionType === "phish" ? "bg-cyber-error/10 text-cyber-error" : "bg-cyber-success/10 text-cyber-success"}
-                                        `}
+                      className="p-4 rounded-xl flex items-center justify-center transition-all bg-cyber-primary/10 text-cyber-primary w-16 h-16"
                     >
-                      {questionType === "phish" ? (
-                        <ShieldAlert size={28} />
-                      ) : (
-                        <CheckCircle size={28} />
-                      )}
+                      <QuoteIcon size={28} className="text-cyber-primary" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-[10px] font-bold tracking-widest text-cyber-primary uppercase">
-                          {lessons.find((l) => l.id === q.lessonId)?.title}
+                          {lessons.find((l) => l.lessonId === q.lessonId)?.title}
                         </span>
                         <div className="flex gap-3 opacity-60 hover:opacity-100 transition-opacity">
                           <button
@@ -336,7 +343,7 @@ const QuestionsPage = () => {
                             <Edit2 size={16} />
                           </button>
                           <button
-                            onClick={() => handleDelete(q.id)}
+                            onClick={() => handleOpenDeleteModal(q)}
                             className="text-cyber-text-muted hover:text-cyber-error"
                             disabled={questionsLoading}
                           >
@@ -374,204 +381,53 @@ const QuestionsPage = () => {
                     </div>
 
                     <div
-                      className={`
-                                            px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-tighter self-start md:self-center
-                                            ${questionType === "phish" ? "bg-cyber-error/20 text-cyber-error" : "bg-cyber-success/20 text-cyber-success"}
-                                        `}
+                      className="px-4 py-1.5 rounded-full text-sm uppercase tracking-tighter self-start md:self-center bg-cyber-primary/20 text-cyber-primary font-bold"
                     >
-                      {questionType === "phish" ? "PHISH" : "SAFE"}
+                      {q.questionType}
                     </div>
                   </div>
                 </Card>
               </Motion.div>
-            );
-          })}
+            ))
+          ) : (
+            <div className="text-center py-12">
+              <QuoteIcon size={48} className="mx-auto text-cyber-text-muted mb-4" />
+              <p className="text-cyber-text-muted">No questions found</p>
+            </div>
+          )}
         </AnimatePresence>
       </div>
 
       {/* Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-cyber-bg/80 backdrop-blur-sm">
-            <Motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-cyber-surface w-full max-w-2xl rounded-2xl border border-cyber-border shadow-2xl relative max-h-[90vh] overflow-y-auto"
-            >
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 text-cyber-text-muted hover:text-cyber-text transition-colors"
-              >
-                <X size={20} />
-              </button>
+     <QuestionModal
+      isOpen={isModalOpen}
+      onClose={handleCloseModal}
+      onSubmit={handleSubmit}
+      formData={formData}
+      setFormData={setFormData}
+      editingQuestion={editingQuestion}
+      loading={loading}
+      localError={localError}
+      associatedLessonId={associatedLessonId}
+      setAssociatedLessonId={setAssociatedLessonId}
+      lessons={lessons}
+      questionsLoading={questionsLoading}
+      handleAnswerChange={handleAnswerChange}
+      handleCorrectChange={handleCorrectChange}
+      addAnswerField={addAnswerField}
+      removeAnswerField={removeAnswerField}/>
 
-              <div className="p-6 border-b border-cyber-border">
-                <h2 className="text-xl font-bold">
-                  {editingQuestion ? "Edit Question" : "Add Question"}
-                </h2>
-              </div>
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        loading={deleteLoading}
+        title="Delete Question"
+        message="Are you sure you want to delete this question?"
+        itemName={deletingQuestion?.questionText}
+      />
 
-              <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                {localError && (
-                  <div className="bg-red-500/10 text-red-500 p-3 rounded-lg">
-                    {localError}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-cyber-text-muted mb-2">
-                      Associated Lesson
-                    </label>
-                    <select
-                      value={associatedLessonId}
-                      onChange={(e) => setAssociatedLessonId(e.target.value)}
-                      required
-                      className="input-field h-11 cursor-pointer"
-                      disabled={!!editingQuestion}
-                    >
-                      <option value="">Select a lesson</option>
-                      {lessons.map((l) => (
-                        <option key={l.id} value={l.id}>
-                          {l.title}
-                        </option>
-                      ))}
-                    </select>
-
-                    <label className="block text-sm font-medium text-cyber-text-muted mb-2 mt-6">
-                      Question Type
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.questionType}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          questionType: e.target.value,
-                        })
-                      }
-                      required
-                      placeholder="e.g. Email, Multiple Choice, etc."
-                      className="input-field h-11"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <label className="text-sm font-medium text-cyber-text-muted">
-                        Answers
-                      </label>
-                      <button
-                        type="button"
-                        onClick={addAnswerField}
-                        className="text-xs font-bold text-cyber-primary hover:text-cyber-primary/80 flex items-center gap-1"
-                      >
-                        <Plus size={14} /> Add Answer
-                      </button>
-                    </div>
-
-                    <div className="space-y-4">
-                      {formData.answers.map((answer, index) => (
-                        <div key={index} className="flex gap-3 items-start">
-                          <div className="flex-1 relative">
-                            <input
-                              type="text"
-                              value={answer.answerText}
-                              onChange={(e) =>
-                                handleAnswerChange(index, e.target.value)
-                              }
-                              required
-                              placeholder={`Answer ${index + 1}`}
-                              className={`input-field pl-10 h-11 ${
-                                answer.isCorrect ? "border-cyber-primary" : ""
-                              }`}
-                            />
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                              <input
-                                type="radio"
-                                name="correctAnswer"
-                                checked={answer.isCorrect}
-                                onChange={() => handleCorrectChange(index)}
-                                className="w-4 h-4 accent-cyber-primary cursor-pointer"
-                              />
-                            </div>
-                          </div>
-
-                          {formData.answers.length > 1 && (
-                            <button
-                              type="button"
-                              onClick={() => removeAnswerField(index)}
-                              className="p-3 rounded-lg border border-cyber-border text-cyber-text-muted hover:text-cyber-error"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-cyber-text-muted mb-2">
-                    Question Text
-                  </label>
-                  <textarea
-                    value={formData.questionText}
-                    onChange={(e) =>
-                      setFormData({ ...formData, questionText: e.target.value })
-                    }
-                    required
-                    rows={3}
-                    placeholder="e.g. Email from HR asking to click a link to view salary..."
-                    className="input-field resize-none py-3 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-cyber-text-muted mb-2">
-                    Explanation / Content (Optional)
-                  </label>
-                  <textarea
-                    value={formData.questionContent}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        questionContent: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    placeholder="Explain why this is Phish or Safe..."
-                    className="input-field resize-none py-3 w-full"
-                  />
-                </div>
-
-                <div className="flex gap-3 justify-end pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-6 py-2.5 rounded-lg border border-cyber-border font-bold text-cyber-text-muted hover:bg-cyber-surface-alt transition-all"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn-primary px-8"
-                    disabled={questionsLoading}
-                  >
-                    {questionsLoading
-                      ? "Saving..."
-                      : editingQuestion
-                        ? "Save Changes"
-                        : "Add Question"}
-                  </button>
-                </div>
-              </form>
-            </Motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      
     </div>
   );
 };
