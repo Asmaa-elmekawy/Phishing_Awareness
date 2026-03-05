@@ -18,6 +18,8 @@ const QuestionModal = ({
   handleCorrectChange,
   addAnswerField,
   removeAnswerField,
+  questionTypes
+  
 }) => {
   if (!isOpen) return null;
 
@@ -73,19 +75,21 @@ const QuestionModal = ({
                 <label className="block text-sm font-medium text-cyber-text-muted mb-2 mt-6">
                   Question Type
                 </label>
-                <input
-                  type="text"
-                  value={formData.questionType}
+                <select
+                  value={formData.questionTypes}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      questionType: e.target.value,
-                    })
+                    setFormData({ ...formData, questionTypes: e.target.value })
                   }
                   required
-                  placeholder="e.g. Email, Multiple Choice, etc."
-                  className="input-field h-11"
-                />
+                  className="input-field h-12 cursor-pointer"
+                >
+                  <option value="">Select question type</option>
+                  {questionTypes.map((type) => (
+                    <option key={type.id || type} value={type.name || type}>
+                      {type.name || type}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -109,7 +113,9 @@ const QuestionModal = ({
                         <input
                           type="text"
                           value={answer.answerText}
-                          onChange={(e) => handleAnswerChange(index, e.target.value)}
+                          onChange={(e) =>
+                            handleAnswerChange(index, e.target.value)
+                          }
                           required
                           placeholder={`Answer ${index + 1}`}
                           className={`input-field pl-10 h-11 ${

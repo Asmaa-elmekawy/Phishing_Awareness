@@ -4,8 +4,6 @@ import {
   Edit2,
   Trash2,
   Search,
-  ShieldAlert,
-  CheckCircle,
   QuoteIcon,
 } from "lucide-react";
 import Card from "./components/common/Card";
@@ -14,6 +12,7 @@ import { useQuestions } from "../../hooks/useQuestions";
 import { useLessons } from "../../hooks/useLessons";
 import QuestionModal from "./components/common/QuestionModal";
 import DeleteConfirmModal from "./components/common/DeleteConfirmModal";
+import { useMeta } from "../../hooks/useMeta";
 
 const emptyQuestionModel = {
   questionText: "",
@@ -39,6 +38,10 @@ const QuestionsPage = () => {
   } = useQuestions();
 
   const { lessons, loading: lessonsLoading, fetchLessons } = useLessons();
+  const { questionTypes, fetchQuestionTypes } = useMeta();
+  useEffect(() => {
+    fetchQuestionTypes();
+  }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
@@ -173,6 +176,7 @@ const QuestionsPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setLocalError("");
 
     // التحقق من صحة البيانات
@@ -415,7 +419,9 @@ const QuestionsPage = () => {
       handleAnswerChange={handleAnswerChange}
       handleCorrectChange={handleCorrectChange}
       addAnswerField={addAnswerField}
-      removeAnswerField={removeAnswerField}/>
+      removeAnswerField={removeAnswerField}
+      questionTypes={questionTypes}
+    />
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}

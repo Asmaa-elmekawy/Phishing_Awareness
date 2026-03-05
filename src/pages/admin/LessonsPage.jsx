@@ -6,6 +6,7 @@ import { useLessons } from "../../hooks/useLessons";
 import { useQuestions } from "../../hooks/useQuestions";
 import LessonModal from "./components/common/LessonModal";
 import DeleteConfirmModal from "./components/common/DeleteConfirmModal";
+import { useMeta } from "../../hooks/useMeta";
 
 const LessonsPage = () => {
   const {
@@ -17,6 +18,11 @@ const LessonsPage = () => {
     updateLesson,
     deleteLesson,
   } = useLessons();
+  const { difficultyLevels, loading: difficultyLevelsLoading, error: difficultyLevelsError, fetchDifficultyLevels: fetchDifficultyLevels  } = useMeta();
+
+  useEffect(() => {
+    fetchDifficultyLevels();
+  }, []);
 
   const { questions, fetchQuestions } = useQuestions();
 
@@ -270,6 +276,9 @@ const LessonsPage = () => {
         editingLesson={editingLesson}
         loading={loading}
         localError={localError}
+        difficultyLevels={difficultyLevels}
+        difficultyLevelsLoading={difficultyLevelsLoading}
+        difficultyLevelsError={difficultyLevelsError}
       />
 
       <DeleteConfirmModal

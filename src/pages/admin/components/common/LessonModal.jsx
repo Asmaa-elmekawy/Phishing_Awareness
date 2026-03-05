@@ -10,6 +10,7 @@ const LessonModal = ({
   editingLesson,
   loading,
   localError,
+  difficultyLevels,
 }) => {
   if (!isOpen) return null;
 
@@ -85,20 +86,19 @@ const LessonModal = ({
                 <label className="block text-sm font-medium text-cyber-text-muted mb-2">
                   Difficulty Level
                 </label>
-                <input
-                  type="text"
+                <select
                   value={formData.difficultyLevel}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      difficultyLevel: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setFormData({ ...formData, difficultyLevel: e.target.value })}
                   required
-                  placeholder="e.g. Beginner"
-                  className="input-field focus:ring-2 focus:ring-cyber-primary/20 h-11"
-                  disabled={loading}
-                />
+                  className="input-field h-12 cursor-pointer"
+                >
+                  <option value="">Select difficulty level</option>
+                  {difficultyLevels.map((level) => (
+                    <option key={level.id || level} value={level.name || level}>
+                      {level.name || level}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
