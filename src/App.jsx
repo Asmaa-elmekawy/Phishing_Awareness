@@ -10,6 +10,8 @@ import Header from './pages/admin/components/common/Header';
 
 import LessonsPage from './pages/admin/LessonsPage';
 import QuestionsPage from './pages/admin/QuestionsPage';
+import ProfilePage from './pages/admin/ProfilePage';
+import { ROUTES_ADMIN } from './constants/routes';
 
 const ProtectedRoute = ({ children }) => {
   // Auth is intentionally not wired until backend integration.
@@ -39,12 +41,13 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin/register" element={<Register />} />
+        <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
+        <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
+         <Route path={ROUTES_ADMIN.PROFILE.INFO} element={<ProfilePage />} />
 
         {/* Admin Routes */}
         <Route
-          path="/admin"
+          path={ROUTES_ADMIN.DASHBOARD}
           element={
             <ProtectedRoute>
               <MainLayout>
@@ -54,7 +57,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/lessons"
+          path={ROUTES_ADMIN.LESSONS.LIST}
           element={
             <ProtectedRoute>
               <MainLayout>
@@ -69,7 +72,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/questions"
+          path={ROUTES_ADMIN.QUESTIONS.LIST}
           element={
             <ProtectedRoute>
               <MainLayout>

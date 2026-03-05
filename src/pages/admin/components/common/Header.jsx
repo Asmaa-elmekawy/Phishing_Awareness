@@ -1,7 +1,11 @@
 import React from 'react';
 import { User, Bell, Search } from 'lucide-react';
+import { useAccount } from '../../../../hooks/useAccount';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
+    const { user, profileImage } = useAccount();
+
     return (
         <header className="h-16 bg-cyber-surface border-bottom border-cyber-border flex items-center justify-between px-8 sticky top-0 z-10">
             <div className="relative w-80">
@@ -20,14 +24,29 @@ const Header = () => {
                 </button>
 
                 <div className="flex items-center gap-4 border-l border-cyber-border pl-6">
+                  <Link to="/admin/profile" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
                     <div className="text-right">
-                        <p className="text-sm font-semibold">Admin</p>
-                        <p className="text-xs text-cyber-text-muted">Super Admin</p>
+                      <p className="text-sm font-semibold">
+                        {user?.firstName} {user?.lastName}
+                      </p>
+                      <p className="text-xs text-cyber-text-muted">
+                        {user?.role || "User"}
+                      </p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-cyber-primary flex items-center justify-center text-white">
+                    <div className="w-10 h-10 rounded-full bg-cyber-primary flex items-center justify-center text-white overflow-hidden">
+                      {profileImage ? (
+                        <img 
+                          src={profileImage} 
+                          alt="Profile" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
                         <User size={20} />
-                    </div>
-                </div>
+                      )}
+                     </div>
+                  </Link>
+                 </div>
+
             </div>
         </header>
     );

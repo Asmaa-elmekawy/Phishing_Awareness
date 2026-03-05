@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import { Shield, Mail, Lock, AlertCircle } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ROUTES_ADMIN } from '../../constants/routes';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [localError, setLocalError] = useState(''); // للأخطاء المحلية
     
-    //  استخدام الهوك
     const { login, loading, error } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -28,8 +29,7 @@ const Login = () => {
             
             console.log('Login successful:', response);
             
-            // توجيه المستخدم للصفحة الرئيسية بعد نجاح تسجيل الدخول
-            window.location.href = '/admin'; 
+            navigate(ROUTES_ADMIN.DASHBOARD)
             
         } catch (err) {
             // الأخطاء بتتعالج تلقائياً في الهوك
@@ -100,14 +100,13 @@ const Login = () => {
                         </div>
                     </div>
 
-                    {/* رابط نسيت كلمة المرور */}
                     <div className="text-right">
-                        <a 
-                            href="/forget-password" 
+                        <Link 
+                        to={ROUTES_ADMIN.AUTH.FORGOT_PASSWORD}
                             className="text-sm text-cyber-primary hover:text-cyber-primary/80 transition-colors"
                         >
                             Forgot Password?
-                        </a>
+                        </Link>
                     </div>
 
                     <button
@@ -133,7 +132,7 @@ const Login = () => {
                 <div className="mt-6 text-center">
                     <p className="text-cyber-text-muted text-sm">
                         Don't have an account?{' '}
-                        <Link to="/admin/register" className="text-cyber-primary hover:text-cyber-primary/80 transition-colors font-medium">
+                        <Link to={ROUTES_ADMIN.AUTH.REGISTER} className="text-cyber-primary hover:text-cyber-primary/80 transition-colors font-medium">
                             Register here
                         </Link>
                     </p>
