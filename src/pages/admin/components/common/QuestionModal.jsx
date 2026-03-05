@@ -18,8 +18,7 @@ const QuestionModal = ({
   handleCorrectChange,
   addAnswerField,
   removeAnswerField,
-  questionTypes
-  
+  questionTypes,
 }) => {
   if (!isOpen) return null;
 
@@ -76,9 +75,9 @@ const QuestionModal = ({
                   Question Type
                 </label>
                 <select
-                  value={formData.questionTypes}
+                  value={formData.questionType}
                   onChange={(e) =>
-                    setFormData({ ...formData, questionTypes: e.target.value })
+                    setFormData({ ...formData, questionType: e.target.value })
                   }
                   required
                   className="input-field h-12 cursor-pointer"
@@ -166,7 +165,7 @@ const QuestionModal = ({
 
             <div>
               <label className="block text-sm font-medium text-cyber-text-muted mb-2">
-                Explanation / Content (Optional)
+                Explanation / Content
               </label>
               <textarea
                 value={formData.questionContent}
@@ -176,6 +175,7 @@ const QuestionModal = ({
                     questionContent: e.target.value,
                   })
                 }
+                required
                 rows={3}
                 placeholder="Explain why this is Phish or Safe..."
                 className="input-field resize-none py-3 w-full"
