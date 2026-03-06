@@ -14,8 +14,10 @@ import ProfilePage from './pages/admin/ProfilePage';
 import { ROUTES_ADMIN } from './constants/routes';
 
 const ProtectedRoute = ({ children }) => {
-  // Auth is intentionally not wired until backend integration.
-  // Keep the routing + layout structure unchanged.
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    return <Navigate to={ROUTES_ADMIN.AUTH.LOGIN} replace />;
+  }
   return children;
 };
 
@@ -43,7 +45,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
         <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
-         <Route path={ROUTES_ADMIN.PROFILE.INFO} element={<ProfilePage />} />
+        <Route 
+          path={ROUTES_ADMIN.PROFILE.INFO} 
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } 
+        />
 
         {/* Admin Routes */}
         <Route
