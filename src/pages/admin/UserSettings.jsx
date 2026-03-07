@@ -10,7 +10,7 @@ import {
     User
 } from "lucide-react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
-import { useUsers } from "../../hooks/useUsers";
+import { useUsers } from "../../hooks/Admin/useUsers";
 import Card from "./components/common/Card";
 
 const UserSettings = () => {

@@ -1,6 +1,6 @@
 // hooks/useQuestions.js
 import { useState, useEffect } from "react";
-import questionService from "../services/questionService";
+import questionService from "../../services/AdminServices/questionService";
 
 export const useQuestions = (lessonId = null) => {
   const [questions, setQuestions] = useState([]);

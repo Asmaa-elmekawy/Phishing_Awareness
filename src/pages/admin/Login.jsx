@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Shield, Mail, Lock, AlertCircle } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/Admin/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES_ADMIN } from '../../constants/routes';
 

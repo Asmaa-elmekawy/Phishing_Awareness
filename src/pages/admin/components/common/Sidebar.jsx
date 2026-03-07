@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, HelpCircle, LogOut, ShieldCheck, Users } from 'lucide-react';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../../hooks/Admin/useAuth';
 import { ROUTES_ADMIN } from '../../../../constants/routes';
 const Sidebar = () => {
     const navigate = useNavigate();

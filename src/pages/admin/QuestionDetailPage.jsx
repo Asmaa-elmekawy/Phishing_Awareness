@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, QuoteIcon, CheckCircle, XCircle, Info, ShieldAlert, Edit2, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useQuestions } from '../../hooks/useQuestions';
-import { useLessons } from '../../hooks/useLessons';
-import { useMeta } from '../../hooks/useMeta';
+import { useQuestions } from '../../hooks/Admin/useQuestions';
+import { useLessons } from '../../hooks/Admin/useLessons';
+import { useMeta } from '../../hooks/Admin/useMeta';
 import Card from './components/common/Card';
 import QuestionModal from './components/common/QuestionModal';
 

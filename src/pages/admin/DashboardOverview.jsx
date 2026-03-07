@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import Card from './components/common/Card';
 import { motion } from 'framer-motion';
 import { ROUTES_ADMIN } from '../../constants/routes';
-import { useAccount } from '../../hooks/useAccount';
+import { useAccount } from '../../hooks/Admin/useAccount';
 import { WelcomeSection, StatCard, SimpleChart, ActivityTable } from './components/DashboardWidgets';
-import { useLessons } from '../../hooks/useLessons';
-import questionService from '../../services/questionService';
+import { useLessons } from '../../hooks/Admin/useLessons';
+import questionService from '../../services/AdminServices/questionService';
 
 const DashboardOverview = () => {
   const navigate = useNavigate();

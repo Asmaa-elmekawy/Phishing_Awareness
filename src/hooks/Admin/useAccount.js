@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import accountService from "../services/accountService";
+import accountService from "../../services/AdminServices/accountService";
 
 export const useAccount = () => {
   const [user, setUser] = useState(null);
@@ -17,7 +17,9 @@ export const useAccount = () => {
       setUser(data);
       if (data && data.profileImage) {
         // Construct the full image URL. Ensure not to double slash if the path has one.
-        const imagePath = data.profileImage.startsWith('/') ? data.profileImage.slice(1) : data.profileImage;
+        const imagePath = data.profileImage.startsWith("/")
+          ? data.profileImage.slice(1)
+          : data.profileImage;
         setProfileImage(`https://phish-escape.runasp.net/${imagePath}`);
       } else {
         setProfileImage(null);

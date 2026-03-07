@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, BookOpen, HelpCircle, ChevronRight, Clock, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useLessons } from '../../hooks/useLessons';
-import questionService from '../../services/questionService';
+import { useLessons } from '../../hooks/Admin/useLessons';
+import questionService from '../../services/AdminServices/questionService';
 import Card from './components/common/Card';
 import LessonModal from './components/common/LessonModal';
-import { useMeta } from '../../hooks/useMeta';
+import { useMeta } from '../../hooks/Admin/useMeta';
 
 const LessonDetailPage = () => {
     const { id } = useParams();

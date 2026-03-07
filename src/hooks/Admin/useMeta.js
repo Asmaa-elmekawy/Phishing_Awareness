@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import metaService from "../services/metaService";
+import metaService from "../../services/AdminServices/metaService";
 
 export const useMeta = () => {
   const [difficultyLevels, setDifficultyLevels] = useState([]);

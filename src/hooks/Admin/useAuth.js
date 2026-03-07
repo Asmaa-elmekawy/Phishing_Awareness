@@ -1,5 +1,5 @@
 import { useState } from "react";
-import authService from "../services/authService";
+import authService from "../../services/AdminServices/authService";
 
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);

@@ -9,11 +9,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import Card from "./components/common/Card";
 import { motion as Motion, AnimatePresence } from "framer-motion";
-import { useQuestions } from "../../hooks/useQuestions";
-import { useLessons } from "../../hooks/useLessons";
+import { useQuestions } from "../../hooks/Admin/useQuestions";
+import { useLessons } from "../../hooks/Admin/useLessons";
 import QuestionModal from "./components/common/QuestionModal";
 import DeleteConfirmModal from "./components/common/DeleteConfirmModal";
-import { useMeta } from "../../hooks/useMeta";
+import { useMeta } from "../../hooks/Admin/useMeta";
 
 const emptyQuestionModel = {
   questionText: "",

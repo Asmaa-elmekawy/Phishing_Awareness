@@ -13,7 +13,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
-import { useAccount } from "../../hooks/useAccount";
+import { useAccount } from "../../hooks/Admin/useAccount";
 import Card from "./components/common/Card";
 import { useNavigate } from "react-router-dom";
 import { ROUTES_ADMIN } from '../../constants/routes';

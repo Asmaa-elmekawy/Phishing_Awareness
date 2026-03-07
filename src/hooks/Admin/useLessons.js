@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import lessonService from "../services/lessonsService";
+import lessonService from "../../services/AdminServices/lessonsService";
 
 export const useLessons = () => {
   const [lessons, setLessons] = useState([]);

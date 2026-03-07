@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Mail, Lock, User, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/Admin/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {

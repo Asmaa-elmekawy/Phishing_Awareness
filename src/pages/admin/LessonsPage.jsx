@@ -3,11 +3,11 @@ import { Plus, Edit2, Trash2, Search, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Card from "./components/common/Card";
 import { motion as Motion, AnimatePresence } from "framer-motion";
-import { useLessons } from "../../hooks/useLessons";
-import { useQuestions } from "../../hooks/useQuestions";
+import { useLessons } from "../../hooks/Admin/useLessons";
+import { useQuestions } from "../../hooks/Admin/useQuestions";
 import LessonModal from "./components/common/LessonModal";
 import DeleteConfirmModal from "./components/common/DeleteConfirmModal";
-import { useMeta } from "../../hooks/useMeta";
+import { useMeta } from "../../hooks/Admin/useMeta";
 import { ROUTES_ADMIN } from "../../constants/routes";
 
 const LessonsPage = () => {
