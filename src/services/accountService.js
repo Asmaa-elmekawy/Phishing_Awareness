@@ -34,7 +34,7 @@ class AccountService {
   async uploadProfileImage(imageFile) {
     try {
       const formData = new FormData();
-      formData.append("profileImage", imageFile);
+      formData.append("Image", imageFile);
 
       const response = await axiosInstance.put(
         "/me/upload-profile-image",
@@ -45,17 +45,6 @@ class AccountService {
           },
         },
       );
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
-
-  async getProfileImage() {
-    try {
-      const response = await axiosInstance.get("/me/get-profile-image", {
-        responseType: "blob", // مهم عشان الصورة
-      });
       return response.data;
     } catch (error) {
       throw this.handleError(error);

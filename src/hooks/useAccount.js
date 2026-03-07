@@ -15,6 +15,13 @@ export const useAccount = () => {
       const data = await accountService.getCurrentUser();
       console.log("👤 User data:", data);
       setUser(data);
+      if (data && data.profileImage) {
+        // Construct the full image URL. Ensure not to double slash if the path has one.
+        const imagePath = data.profileImage.startsWith('/') ? data.profileImage.slice(1) : data.profileImage;
+        setProfileImage(`https://phish-escape.runasp.net/${imagePath}`);
+      } else {
+        setProfileImage(null);
+      }
       return data;
     } catch (err) {
       console.error("❌ Error fetching user:", err);
@@ -70,7 +77,7 @@ export const useAccount = () => {
       const data = await accountService.uploadProfileImage(imageFile);
       console.log("✅ Image uploaded:", data);
       setSuccess("Profile image uploaded successfully");
-      await fetchProfileImage(); // نجيب الصورة الجديدة
+      await fetchCurrentUser(); // Get updated info which contains new image path
       return data;
     } catch (err) {
       console.error("❌ Error uploading image:", err);
@@ -81,39 +88,9 @@ export const useAccount = () => {
     }
   };
 
-  const fetchProfileImage = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const imageBlob = await accountService.getProfileImage();
-      const imageUrl = URL.createObjectURL(imageBlob);
-      setProfileImage((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return imageUrl;
-      });
-      return imageUrl;
-    } catch (err) {
-      console.error("❌ Error fetching profile image:", err);
-      setError(err.message);
-      // مش هنرمي الخطأ لأن ممكن ميكونش في صورة
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchCurrentUser();
-    fetchProfileImage();
   }, []);
-
-  // تنظيف الـ URL object عند إلغاء التحميل
-  useEffect(() => {
-    return () => {
-      if (profileImage) {
-        URL.revokeObjectURL(profileImage);
-      }
-    };
-  }, [profileImage]);
 
   return {
     user,
@@ -125,6 +102,5 @@ export const useAccount = () => {
     updateUserInfo,
     changePassword,
     uploadProfileImage,
-    fetchProfileImage,
   };
 };
