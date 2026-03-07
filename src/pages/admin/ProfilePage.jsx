@@ -1,11 +1,11 @@
 import React, { useState, useRef } from "react";
-import { 
-  User, 
-  Mail, 
-  Camera, 
-  Edit2, 
-  Save, 
-  Shield, 
+import {
+  User,
+  Mail,
+  Camera,
+  Edit2,
+  Save,
+  Shield,
   Calendar,
   Lock,
   CheckCircle,
@@ -118,10 +118,10 @@ const ProfilePage = () => {
 
     try {
       await changePassword({
-        currentPassword: passwordForm.currentPassword,
+        CurrentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
       });
-      
+
       setIsChangingPassword(false);
       setPasswordForm({
         currentPassword: "",
@@ -149,12 +149,12 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyber-bg via-cyber-bg/95 to-cyber-bg p-6 md:p-8">
       <div className="max-w-6xl mx-auto">
-      <div className="mb-8 relative">
+        <div className="mb-8 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-cyber-primary/20 to-transparent rounded-2xl blur-3xl -z-10"></div>
-          
+
           {/* Back Button */}
           <button
-            onClick={() => navigate(-1)} 
+            onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-cyber-text-muted hover:text-cyber-primary transition-colors mb-4 group"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
@@ -173,7 +173,7 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-       
+
 
         {/* رسائل الخطأ والنجاح */}
         <AnimatePresence>
@@ -209,21 +209,21 @@ const ProfilePage = () => {
             <Card className="sticky top-6 overflow-hidden group">
               {/* Background Gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-cyber-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+
               <div className="relative">
                 {/* Cover Image Placeholder */}
                 <div className="h-24 bg-gradient-to-r from-cyber-primary/20 to-cyber-accent/20 rounded-t-lg -mt-6 -mx-6 mb-4"></div>
-                
+
                 {/* Profile Image */}
                 <div className="flex flex-col items-center -mt-12">
-                  <div 
+                  <div
                     className="relative w-28 h-28 rounded-2xl overflow-hidden bg-gradient-to-br from-cyber-surface to-cyber-surface-alt border-4 border-cyber-surface shadow-xl cursor-pointer group/image"
                     onClick={handleImageClick}
                   >
                     {profileImage ? (
-                      <img 
-                        src={profileImage} 
-                        alt="Profile" 
+                      <img
+                        src={profileImage}
+                        alt="Profile"
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -242,7 +242,7 @@ const ProfilePage = () => {
                     accept="image/*"
                     className="hidden"
                   />
-                  
+
                   <h2 className="mt-4 text-2xl font-bold">
                     {user?.firstName} {user?.lastName}
                   </h2>
@@ -250,7 +250,7 @@ const ProfilePage = () => {
                     <Mail size={14} />
                     {user?.email}
                   </p>
-                  
+
                 </div>
 
                 {/* Member Since */}
@@ -376,7 +376,7 @@ const ProfilePage = () => {
                       <p className="font-medium text-lg">{user?.firstName} {user?.lastName}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4 p-4 rounded-xl bg-cyber-bg/50 border border-cyber-border group hover:border-cyber-primary/30 transition-all">
                     <div className="p-3 rounded-lg bg-cyber-primary/10 group-hover:scale-110 transition-transform">
                       <Mail size={20} className="text-cyber-primary" />
