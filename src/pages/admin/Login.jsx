@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, Mail, Lock, AlertCircle } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
@@ -8,29 +8,27 @@ import { ROUTES_ADMIN } from '../../constants/routes';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [localError, setLocalError] = useState(''); // للأخطاء المحلية
-    
+    const [localError, setLocalError] = useState('');
+
     const { login, loading, error } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLocalError('');
-        
-        // التحقق من المدخلات محلياً
+
         if (!email || !password) {
             setLocalError('Please enter both email and password');
             return;
         }
 
         try {
-            //  استخدام دالة login من الهوك
             const response = await login(email, password);
-            
+
             console.log('Login successful:', response);
-            
+
             navigate(ROUTES_ADMIN.DASHBOARD)
-            
+
         } catch (err) {
             // الأخطاء بتتعالج تلقائياً في الهوك
             console.error('Login failed:', err);
@@ -75,7 +73,7 @@ const Login = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                disabled={loading} 
+                                disabled={loading}
                                 placeholder="you@example.com"
                                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-cyber-border bg-cyber-surface-alt text-cyber-text outline-none focus:border-cyber-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             />
@@ -93,7 +91,7 @@ const Login = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                disabled={loading} 
+                                disabled={loading}
                                 placeholder="••••••••"
                                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-cyber-border bg-cyber-surface-alt text-cyber-text outline-none focus:border-cyber-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             />
@@ -101,8 +99,8 @@ const Login = () => {
                     </div>
 
                     <div className="text-right">
-                        <Link 
-                        to={ROUTES_ADMIN.AUTH.FORGOT_PASSWORD}
+                        <Link
+                            to={ROUTES_ADMIN.AUTH.FORGOT_PASSWORD}
                             className="text-sm text-cyber-primary hover:text-cyber-primary/80 transition-colors"
                         >
                             Forgot Password?
@@ -111,7 +109,7 @@ const Login = () => {
 
                     <button
                         type="submit"
-                        disabled={loading} 
+                        disabled={loading}
                         className="w-full py-3 rounded-xl bg-cyber-primary text-white font-bold hover:shadow-lg hover:shadow-cyber-primary/30 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
                     >
                         {loading ? (

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { BookOpen, HelpCircle, Users, CheckCircle, Clock, ArrowUpRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { BookOpen, HelpCircle, Users, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Card from './components/common/Card';
 import { motion } from 'framer-motion';
@@ -19,32 +19,32 @@ const DashboardOverview = () => {
 
   useEffect(() => {
     const loadData = async () => {
-        setLoadingQuestions(true);
-        try {
-            const lessonsData = await fetchLessons();
-            if (lessonsData && lessonsData.length > 0) {
-                const questionPromises = lessonsData.map(lesson => 
-                    questionService.getQuestionsByLesson(lesson.lessonId)
-                );
-                const allQuestions = await Promise.all(questionPromises);
-                
-                const counts = {};
-                let total = 0;
-                allQuestions.forEach((qs, index) => {
-                    const lessonId = lessonsData[index].lessonId;
-                    const count = qs?.length || 0;
-                    counts[lessonId] = count;
-                    total += count;
-                });
-                
-                setLessonQuestionCounts(counts);
-                setTotalQuestions(total);
-            }
-        } catch (error) {
-            console.error("Error fetching dashboard data:", error);
-        } finally {
-            setLoadingQuestions(false);
+      setLoadingQuestions(true);
+      try {
+        const lessonsData = await fetchLessons();
+        if (lessonsData && lessonsData.length > 0) {
+          const questionPromises = lessonsData.map(lesson =>
+            questionService.getQuestionsByLesson(lesson.lessonId)
+          );
+          const allQuestions = await Promise.all(questionPromises);
+
+          const counts = {};
+          let total = 0;
+          allQuestions.forEach((qs, index) => {
+            const lessonId = lessonsData[index].lessonId;
+            const count = qs?.length || 0;
+            counts[lessonId] = count;
+            total += count;
+          });
+
+          setLessonQuestionCounts(counts);
+          setTotalQuestions(total);
         }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoadingQuestions(false);
+      }
     };
     loadData();
   }, []);
@@ -104,13 +104,13 @@ const DashboardOverview = () => {
       {/* Stats Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <StatCard 
-            key={stat.title} 
-            {...stat} 
+          <StatCard
+            key={stat.title}
+            {...stat}
             onClick={() => {
-                if (stat.path && stat.path !== '#') {
-                    navigate(stat.path);
-                }
+              if (stat.path && stat.path !== '#') {
+                navigate(stat.path);
+              }
             }}
           />
         ))}
@@ -149,13 +149,7 @@ const DashboardOverview = () => {
                 <HelpCircle size={18} className="text-cyber-secondary group-hover:scale-110 transition-transform" />
                 <span className="font-medium">Manage Questions</span>
               </button>
-              <div className="pt-4 mt-4 border-t border-cyber-border">
-                <p className="text-xs text-cyber-text-muted mb-3 uppercase font-bold tracking-widest">System Shortcuts</p>
-                <button className="w-full p-3 rounded-lg flex items-center justify-between text-sm text-cyber-text-muted hover:text-cyber-text hover:bg-cyber-surface-alt/50 transition-colors">
-                  <span className="flex items-center gap-2"><Clock size={14} /> System Logs</span>
-                  <ArrowUpRight size={14} />
-                </button>
-              </div>
+
             </div>
           </Card>
 
