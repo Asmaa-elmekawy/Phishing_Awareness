@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, HelpCircle, LogOut, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, BookOpen, HelpCircle, LogOut, ShieldCheck, Users } from 'lucide-react';
 import { useAuth } from '../../../../hooks/useAuth';
 import { ROUTES_ADMIN } from '../../../../constants/routes';
 const Sidebar = () => {
@@ -16,6 +16,7 @@ const Sidebar = () => {
         { name: 'Overview', icon: <LayoutDashboard size={20} />, path: ROUTES_ADMIN.DASHBOARD, end: true },
         { name: 'Lessons', icon: <BookOpen size={20} />, path: ROUTES_ADMIN.LESSONS.LIST },
         { name: 'Questions', icon: <HelpCircle size={20} />, path: ROUTES_ADMIN.QUESTIONS.LIST },
+        { name: 'User Management', icon: <Users size={20} />, path: ROUTES_ADMIN.SETTINGS.USER_SETTINGS },
     ];
 
     return (

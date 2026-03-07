@@ -22,4 +22,7 @@ export const ROUTES_ADMIN = {
   PROFILE: {
     INFO: "/admin/profile",
   },
+  SETTINGS: {
+    USER_SETTINGS: "/admin/user-settings",
+  },
 };

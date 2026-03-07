@@ -14,6 +14,7 @@ import ProfilePage from './pages/admin/ProfilePage';
 import LessonDetailPage from './pages/admin/LessonDetailPage';
 import QuestionDetailPage from './pages/admin/QuestionDetailPage';
 import { ROUTES_ADMIN } from './constants/routes';
+import UserSettings from './pages/admin/UserSettings';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -44,15 +45,16 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
         <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
-        <Route 
-          path={ROUTES_ADMIN.PROFILE.INFO} 
+
+        <Route
+          path={ROUTES_ADMIN.PROFILE.INFO}
           element={
             <ProtectedRoute>
               <MainLayout>
                 <ProfilePage />
               </MainLayout>
             </ProtectedRoute>
-          } 
+          }
         />
 
         {/* Admin Routes */}
@@ -106,6 +108,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path={ROUTES_ADMIN.SETTINGS.USER_SETTINGS}
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <UserSettings />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

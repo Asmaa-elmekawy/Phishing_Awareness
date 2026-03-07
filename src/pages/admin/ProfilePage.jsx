@@ -16,6 +16,8 @@ import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useAccount } from "../../hooks/useAccount";
 import Card from "./components/common/Card";
 import { useNavigate } from "react-router-dom";
+import { ROUTES_ADMIN } from '../../constants/routes';
+
 
 const ProfilePage = () => {
   const {
@@ -154,7 +156,7 @@ const ProfilePage = () => {
 
           {/* Back Button */}
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(ROUTES_ADMIN.DASHBOARD)}
             className="flex items-center gap-2 text-cyber-text-muted hover:text-cyber-primary transition-colors mb-4 group"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
