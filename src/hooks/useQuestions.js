@@ -26,6 +26,28 @@ export const useQuestions = (lessonId = null) => {
     }
   };
 
+  // جلب كل الأسئلة لكل الدروس (مفيد لصفحة الدروس الرئيسية)
+  const fetchAllQuestions = async (lessonsList) => {
+    if (!lessonsList || lessonsList.length === 0) return [];
+    
+    setLoading(true);
+    setError(null);
+    try {
+      const promises = lessonsList.map((lesson) =>
+        questionService.getQuestionsByLesson(lesson.lessonId || lesson.id)
+      );
+      const results = await Promise.all(promises);
+      const allQuestions = results.flat();
+      setQuestions(allQuestions);
+      return allQuestions;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // جلب سؤال معين
   const fetchQuestionById = async (lessonId, questionId) => {
     setLoading(true);
@@ -110,6 +132,8 @@ export const useQuestions = (lessonId = null) => {
     loading,
     error,
     fetchQuestionsByLesson,
+    fetchQuestions: fetchAllQuestions, // Alias for convenience
+    fetchAllQuestions,
     fetchQuestionById,
     createQuestion,
     updateQuestion,

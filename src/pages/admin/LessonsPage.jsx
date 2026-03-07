@@ -48,8 +48,17 @@ const LessonsPage = () => {
   });
 
   useEffect(() => {
-    fetchLessons();
-    if (fetchQuestions) fetchQuestions();
+    const loadData = async () => {
+      try {
+        const lessonsData = await fetchLessons();
+        if (lessonsData && fetchQuestions) {
+          await fetchQuestions(lessonsData);
+        }
+      } catch (err) {
+        console.error("Error loading data:", err);
+      }
+    };
+    loadData();
   }, []);
 
   const filteredLessons = lessons.filter(
