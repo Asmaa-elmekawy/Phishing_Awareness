@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { useLessons } from '../../hooks/useLessons';
 import questionService from '../../services/questionService';
 import Card from './components/common/Card';
-import { ROUTES_ADMIN } from '../../constants/routes';
 import LessonModal from './components/common/LessonModal';
 import { useMeta } from '../../hooks/useMeta';
 
@@ -14,10 +13,10 @@ const LessonDetailPage = () => {
     const navigate = useNavigate();
     const { selectedLesson, fetchLessonById, updateLesson, loading: lessonLoading } = useLessons();
     const { difficultyLevels, fetchDifficultyLevels, loading: metaLoading } = useMeta();
-    
+
     const [questions, setQuestions] = useState([]);
     const [loadingQuestions, setLoadingQuestions] = useState(false);
-    
+
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [localError, setLocalError] = useState("");
@@ -97,13 +96,7 @@ const LessonDetailPage = () => {
     if (!selectedLesson) {
         return (
             <div className="p-8 max-w-7xl mx-auto space-y-8">
-                 <button
-                    onClick={() => navigate(ROUTES_ADMIN.LESSONS.LIST)}
-                    className="flex items-center gap-2 text-cyber-text-muted hover:text-cyber-primary transition-colors mb-4 group"
-                >
-                    <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    <span>Back to Lessons</span>
-                </button>
+
                 <div className="text-center py-20 bg-cyber-surface rounded-2xl border border-cyber-border">
                     <BookOpen size={48} className="mx-auto text-cyber-text-muted mb-4 opacity-20" />
                     <p className="text-xl font-bold text-cyber-text">Lesson Not Found</p>
@@ -116,11 +109,11 @@ const LessonDetailPage = () => {
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-8">
             <button
-                onClick={() => navigate(ROUTES_ADMIN.LESSONS.LIST)}
+                onClick={() => navigate(-1)}
                 className="flex items-center gap-2 text-cyber-text-muted hover:text-cyber-primary transition-colors mb-4 group"
             >
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                <span>Back to Lessons</span>
+                <span>Back</span>
             </button>
 
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -226,7 +219,7 @@ const LessonDetailPage = () => {
                                 <p className="text-xs font-bold text-cyber-success uppercase mb-1">Live Status</p>
                                 <p className="text-sm text-cyber-text-muted">This lesson is currently active and visible to all users.</p>
                             </div>
-                            <button 
+                            <button
                                 onClick={handleOpenEditModal}
                                 className="w-full py-4 rounded-xl bg-cyber-primary text-white font-bold text-sm uppercase tracking-widest hover:bg-cyber-primary/90 transition-all active:scale-[0.98]"
                             >

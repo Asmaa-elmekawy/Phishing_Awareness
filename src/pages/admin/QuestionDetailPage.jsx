@@ -7,7 +7,6 @@ import { useLessons } from '../../hooks/useLessons';
 import { useMeta } from '../../hooks/useMeta';
 import Card from './components/common/Card';
 import QuestionModal from './components/common/QuestionModal';
-import { ROUTES_ADMIN } from '../../constants/routes';
 
 const QuestionDetailPage = () => {
     const { lessonId, questionId } = useParams();
@@ -134,13 +133,7 @@ const QuestionDetailPage = () => {
     if (!selectedQuestion) {
         return (
             <div className="p-8 max-w-5xl mx-auto space-y-8">
-                <button
-                    onClick={() => navigate(ROUTES_ADMIN.QUESTIONS.LIST)}
-                    className="flex items-center gap-2 text-cyber-text-muted hover:text-cyber-primary transition-colors mb-4 group"
-                >
-                    <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    <span>Back to Questions</span>
-                </button>
+
                 <div className="text-center py-20 bg-cyber-surface rounded-2xl border border-cyber-border">
                     <HelpCircle size={48} className="mx-auto text-cyber-text-muted mb-4 opacity-20" />
                     <p className="text-xl font-bold text-cyber-text">Question Not Found</p>
@@ -153,11 +146,11 @@ const QuestionDetailPage = () => {
     return (
         <div className="p-8 max-w-5xl mx-auto space-y-8">
             <button
-                onClick={() => navigate(ROUTES_ADMIN.QUESTIONS.LIST)}
+                onClick={() => navigate(-1)}
                 className="flex items-center gap-2 text-cyber-text-muted hover:text-cyber-primary transition-colors mb-4 group"
             >
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                <span>Back to Questions</span>
+                <span>Back</span>
             </button>
 
             <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
