@@ -6,6 +6,7 @@ import {
   Search,
   QuoteIcon,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Card from "./components/common/Card";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useQuestions } from "../../hooks/useQuestions";
@@ -27,6 +28,7 @@ const emptyQuestionModel = {
 };
 
 const QuestionsPage = () => {
+  const navigate = useNavigate();
   const {
     questions,
     loading: questionsLoading,
@@ -325,7 +327,10 @@ const QuestionsPage = () => {
                 // exit={{ opacity: 0, x: 20 }}
                 layout
               >
-                <Card className="hover:border-cyber-primary/20 transition-all">
+                <Card 
+                  className="hover:border-cyber-primary/20 transition-all"
+                  onClick={() => navigate(`/admin/lessons/${q.lessonId}/questions/${q.questionId}`)}
+                >
                   <div className="flex flex-col md:flex-row gap-6 items-start">
                     <div
                       className="p-4 rounded-xl flex items-center justify-center transition-all bg-cyber-primary/10 text-cyber-primary w-16 h-16"
@@ -340,14 +345,20 @@ const QuestionsPage = () => {
                         </span>
                         <div className="flex gap-3 opacity-60 hover:opacity-100 transition-opacity">
                           <button
-                            onClick={() => handleOpenModal(q)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenModal(q);
+                            }}
                             className="text-cyber-text-muted hover:text-cyber-primary"
                             disabled={questionsLoading}
                           >
                             <Edit2 size={16} />
                           </button>
                           <button
-                            onClick={() => handleOpenDeleteModal(q)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenDeleteModal(q);
+                            }}
                             className="text-cyber-text-muted hover:text-cyber-error"
                             disabled={questionsLoading}
                           >

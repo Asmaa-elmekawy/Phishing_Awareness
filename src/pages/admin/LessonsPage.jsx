@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Search, BookOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Card from "./components/common/Card";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useLessons } from "../../hooks/useLessons";
@@ -7,8 +8,10 @@ import { useQuestions } from "../../hooks/useQuestions";
 import LessonModal from "./components/common/LessonModal";
 import DeleteConfirmModal from "./components/common/DeleteConfirmModal";
 import { useMeta } from "../../hooks/useMeta";
+import { ROUTES_ADMIN } from "../../constants/routes";
 
 const LessonsPage = () => {
+  const navigate = useNavigate();
   const {
     lessons,
     loading,
@@ -217,17 +220,24 @@ const LessonsPage = () => {
             >
               <Card
                 className="h-full hover:border-cyber-primary/40 transition-all group"
+                onClick={() => navigate(`/admin/lessons/${lesson.lessonId}`)}
                 footer={
                   <div className="flex gap-4 justify-end">
                     <button
-                      onClick={() => handleOpenEditModal(lesson)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenEditModal(lesson);
+                      }}
                       className="text-cyber-text-muted hover:text-cyber-primary flex items-center gap-1.5 text-sm font-medium transition-colors"
                       disabled={loading}
                     >
                       <Edit2 size={16} /> Edit
                     </button>
                     <button
-                      onClick={() => handleOpenDeleteModal(lesson)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenDeleteModal(lesson);
+                      }}
                       className="text-cyber-text-muted hover:text-cyber-error flex items-center gap-1.5 text-sm font-medium transition-colors"
                       disabled={loading}
                     >

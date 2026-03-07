@@ -11,10 +11,12 @@ export const ROUTES_ADMIN = {
 
   LESSONS: {
     LIST: "/admin/lessons",
+    DETAILS: "/admin/lessons/:id",
   },
 
   QUESTIONS: {
     LIST: "/admin/questions",
+    DETAILS: "/admin/lessons/:lessonId/questions/:questionId",
   },
 
   PROFILE: {

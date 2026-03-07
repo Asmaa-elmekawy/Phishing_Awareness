@@ -11,6 +11,8 @@ import Header from './pages/admin/components/common/Header';
 import LessonsPage from './pages/admin/LessonsPage';
 import QuestionsPage from './pages/admin/QuestionsPage';
 import ProfilePage from './pages/admin/ProfilePage';
+import LessonDetailPage from './pages/admin/LessonDetailPage';
+import QuestionDetailPage from './pages/admin/QuestionDetailPage';
 import { ROUTES_ADMIN } from './constants/routes';
 
 const ProtectedRoute = ({ children }) => {
@@ -36,9 +38,6 @@ const MainLayout = ({ children }) => {
 };
 
 function App() {
-  const [lessons, setLessons] = useState([]);
-  const [questions, setQuestions] = useState([]);
-
   return (
     <Router>
       <Routes>
@@ -49,7 +48,9 @@ function App() {
           path={ROUTES_ADMIN.PROFILE.INFO} 
           element={
             <ProtectedRoute>
-              <ProfilePage />
+              <MainLayout>
+                <ProfilePage />
+              </MainLayout>
             </ProtectedRoute>
           } 
         />
@@ -60,7 +61,7 @@ function App() {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <DashboardOverview lessons={lessons} questions={questions} />
+                <DashboardOverview />
               </MainLayout>
             </ProtectedRoute>
           }
@@ -70,12 +71,17 @@ function App() {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <LessonsPage
-                  lessons={lessons}
-                  setLessons={setLessons}
-                  questions={questions}
-                  setQuestions={setQuestions}
-                />
+                <LessonsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES_ADMIN.LESSONS.DETAILS}
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <LessonDetailPage />
               </MainLayout>
             </ProtectedRoute>
           }
@@ -85,12 +91,17 @@ function App() {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <QuestionsPage
-                  lessons={lessons}
-                  setLessons={setLessons}
-                  questions={questions}
-                  setQuestions={setQuestions}
-                />
+                <QuestionsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES_ADMIN.QUESTIONS.DETAILS}
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <QuestionDetailPage />
               </MainLayout>
             </ProtectedRoute>
           }

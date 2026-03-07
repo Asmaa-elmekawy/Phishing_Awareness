@@ -1,8 +1,11 @@
 import React from 'react';
 
-const Card = ({ children, title, subtitle, footer, className = '', contentClassName = '' }) => {
+const Card = ({ children, title, subtitle, footer, className = '', contentClassName = '', onClick }) => {
     return (
-        <div className={`bg-cyber-surface rounded-xl border border-cyber-border overflow-hidden flex flex-col ${className}`}>
+        <div 
+            onClick={onClick}
+            className={`bg-cyber-surface rounded-xl border border-cyber-border overflow-hidden flex flex-col ${className} ${onClick ? 'cursor-pointer' : ''}`}
+        >
             {(title || subtitle) && (
                 <div className="p-5 border-b border-cyber-border">
                     {title && <h3 className="text-lg font-semibold text-cyber-text">{title}</h3>}
