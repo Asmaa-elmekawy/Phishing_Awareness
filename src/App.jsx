@@ -1,23 +1,28 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/admin/Login';
-import Register from './pages/admin/Register';
-import DashboardOverview from './pages/admin/DashboardOverview';
-import Home from './pages/website/Home';
-import Lessons from './pages/website/Lessons';
-import Simulations from './pages/website/Simulations';
-import Analytics from './pages/website/Analytics';
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Login from "./pages/admin/Login";
+import Register from "./pages/admin/Register";
+import DashboardOverview from "./pages/admin/DashboardOverview";
+import Home from "./pages/website/Home";
+import Lessons from "./pages/website/Lessons";
+import Simulations from "./pages/website/Simulations";
+import Analytics from "./pages/website/Analytics";
 
-import Sidebar from './pages/admin/components/common/Sidebar';
-import Header from './pages/admin/components/common/Header';
+import Sidebar from "./pages/admin/components/common/Sidebar";
+import Header from "./pages/admin/components/common/Header";
 
-import LessonsPage from './pages/admin/LessonsPage';
-import QuestionsPage from './pages/admin/QuestionsPage';
-import ProfilePage from './pages/admin/ProfilePage';
-import LessonDetailPage from './pages/admin/LessonDetailPage';
-import QuestionDetailPage from './pages/admin/QuestionDetailPage';
-import { ROUTES_ADMIN } from './constants/routes';
-import UserSettings from './pages/admin/UserSettings';
+import LessonsPage from "./pages/admin/LessonsPage";
+import QuestionsPage from "./pages/admin/QuestionsPage";
+import ProfilePage from "./pages/admin/ProfilePage";
+import LessonDetailPage from "./pages/admin/LessonDetailPage";
+import QuestionDetailPage from "./pages/admin/QuestionDetailPage";
+import { ROUTES_ADMIN } from "./constants/routes";
+import UserSettings from "./pages/admin/UserSettings";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -43,9 +48,7 @@ const MainLayout = ({ children }) => {
       <Sidebar isOpen={isMobileMenuOpen} />
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         <Header toggleSidebar={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
-        <main className="flex-1 overflow-y-auto w-full">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto w-full">{children}</main>
       </div>
     </div>
   );
@@ -134,7 +137,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
