@@ -26,3 +26,9 @@ export const ROUTES_ADMIN = {
     USER_SETTINGS: "/admin/user-settings",
   },
 };
+
+export const ROUTES_WEBSITE = {
+  ANALYTICS: "/analytics",
+  SIMULATIONS: "/simulations",
+  LESSONS: "/lessons",
+};

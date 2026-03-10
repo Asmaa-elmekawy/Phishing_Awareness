@@ -21,7 +21,7 @@ import QuestionsPage from "./pages/admin/QuestionsPage";
 import ProfilePage from "./pages/admin/ProfilePage";
 import LessonDetailPage from "./pages/admin/LessonDetailPage";
 import QuestionDetailPage from "./pages/admin/QuestionDetailPage";
-import { ROUTES_ADMIN } from "./constants/routes";
+import { ROUTES_ADMIN, ROUTES_WEBSITE } from "./constants/routes";
 import UserSettings from "./pages/admin/UserSettings";
 
 const ProtectedRoute = ({ children }) => {
@@ -59,9 +59,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/lessons" element={<Lessons />} />
-        <Route path="/simulations" element={<Simulations />} />
-        <Route path="/analytics" element={<Analytics />} />
+        <Route path={ROUTES_WEBSITE.LESSONS} element={<Lessons />} />
+        <Route path={ROUTES_WEBSITE.SIMULATIONS} element={<Simulations />} />
+        <Route path={ROUTES_WEBSITE.ANALYTICS} element={<Analytics />} />
         <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
         <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
 
