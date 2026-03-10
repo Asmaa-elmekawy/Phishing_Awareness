@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, HelpCircle, LogOut, ShieldCheck, Users } from 'lucide-react';
 import { useAuth } from '../../../../hooks/Admin/useAuth';
 import { ROUTES_ADMIN } from '../../../../constants/routes';
-const Sidebar = () => {
+const Sidebar = ({ isOpen }) => {
     const navigate = useNavigate();
     const { logout } = useAuth();
 
@@ -20,7 +20,7 @@ const Sidebar = () => {
     ];
 
     return (
-        <aside className="w-64 bg-cyber-surface border-r border-cyber-border flex flex-col p-6 h-screen sticky top-0">
+        <aside className={`fixed md:relative z-50 w-64 bg-cyber-surface border-r border-cyber-border flex flex-col p-6 h-full transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
             <div className="flex items-center gap-3 mb-10 p-2">
                 <ShieldCheck size={32} className="text-cyber-primary" />
                 <span className="font-bold text-xl tracking-tight">PhishGuard</span>

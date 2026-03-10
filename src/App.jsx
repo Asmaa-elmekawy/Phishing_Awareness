@@ -4,6 +4,9 @@ import Login from './pages/admin/Login';
 import Register from './pages/admin/Register';
 import DashboardOverview from './pages/admin/DashboardOverview';
 import Home from './pages/website/Home';
+import Lessons from './pages/website/Lessons';
+import Simulations from './pages/website/Simulations';
+import Analytics from './pages/website/Analytics';
 
 import Sidebar from './pages/admin/components/common/Sidebar';
 import Header from './pages/admin/components/common/Header';
@@ -25,12 +28,22 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const MainLayout = ({ children }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
-    <div className="flex min-h-screen bg-cyber-bg text-cyber-text">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header />
-        <main className="flex-1 overflow-y-auto">
+    <div className="flex h-screen bg-cyber-bg text-cyber-text overflow-hidden relative">
+      {/* Mobile Sidebar Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      <Sidebar isOpen={isMobileMenuOpen} />
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        <Header toggleSidebar={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+        <main className="flex-1 overflow-y-auto w-full">
           {children}
         </main>
       </div>
@@ -43,6 +56,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/lessons" element={<Lessons />} />
+        <Route path="/simulations" element={<Simulations />} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
         <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
 
