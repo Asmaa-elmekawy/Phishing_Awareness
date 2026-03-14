@@ -13,7 +13,7 @@ const Home = () => {
                 "Learn to protect yourself here."
             </p>
             <Link
-                to="/simulations"
+                to="/dashboard"
                 className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors"
             >
                 Go to WEBSITE
