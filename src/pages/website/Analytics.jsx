@@ -166,7 +166,7 @@ const Analytics = () => {
                     </div>
 
                     {/* Right Panel: Analysis & Breakdown */}
-                    <div className="flex-[2] bg-[#0F1523] flex flex-col relative min-w-[380px] max-w-[500px]">
+                    <div className="w-full lg:flex-[2] lg:w-auto bg-[#0F1523] flex flex-col relative lg:min-w-[380px] lg:max-w-[500px]">
 
                         <div className="p-8 pb-4 border-b border-slate-800/60">
                             <div className="flex justify-between items-end mb-4">
