@@ -37,10 +37,10 @@ const PhishOfTheDay = ({ image }) => {
                     </div>
 
                     <h3 className="text-3xl font-bold text-white leading-tight">
-                        Urgent: Microsoft Account Password Reset Request
+                        Urgent: Microsoft <br /> Account Password <br /> Reset Request
                     </h3>
 
-                    <p className="text-cyber-text-muted text-sm leading-relaxed">
+                    <p className="text-cyber-text-muted text-xl leading-relaxed">
                         Analyze this suspicious email attempt. Attackers are using sophisticated "0" substitution in domains. Can you spot the hidden red flags?
                     </p>
 
