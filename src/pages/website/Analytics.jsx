@@ -4,13 +4,14 @@ import {
     User, Settings, ShieldCheck, ArrowLeft, AlertTriangle, AtSign,
     UserX, AlarmClock, Lightbulb, ArrowRight, Menu
 } from 'lucide-react';
+import { motion as Motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 
 const Analytics = ({ setIsMobileMenuOpen }) => {
     return (
         <>
             {/* Top Header */}
-            <header className="h-20 border-b border-slate-800/60 px-4 md:px-8 flex items-center justify-between shadow-sm z-10 bg-[#0B1120]/80 backdrop-blur-md flex-shrink-0">
+            <Motion.header initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="h-20 border-b border-slate-800/60 px-4 md:px-8 flex items-center justify-between shadow-sm z-10 bg-[#0B1120]/80 backdrop-blur-md flex-shrink-0">
                 <div className="flex items-center gap-2 md:gap-4">
                     <button
                         className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50"
@@ -29,13 +30,13 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
                 <button className="p-2 text-slate-400 hover:text-white transition-colors relative">
                     <Bell size={20} />
                 </button>
-            </header>
+            </Motion.header>
 
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto w-full flex flex-col lg:flex-row [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                 {/* Left Panel: Simulated Inbox */}
-                <div className="flex-[3] p-8 lg:border-r border-slate-800/60 bg-[#0B1120]">
+                <Motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="flex-[3] p-8 lg:border-r border-slate-800/60 bg-[#0B1120]">
 
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Simulated Inbox</h2>
@@ -110,10 +111,10 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
                         </div>
                     </div>
 
-                </div>
+                </Motion.div>
 
                 {/* Right Panel: Analysis & Breakdown */}
-                <div className="flex-[2] bg-[#0F1523] flex flex-col relative min-w-[380px] max-w-[500px]">
+                <Motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="flex-[2] bg-[#0F1523] flex flex-col relative min-w-[380px] max-w-[500px]">
 
                     <div className="p-8 pb-4 border-b border-slate-800/60">
                         <div className="flex justify-between items-end mb-4">
@@ -207,7 +208,7 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
                         </button>
                     </div>
 
-                </div>
+                </Motion.div>
 
             </div>
         </>
