@@ -9,6 +9,14 @@ import { Link as RouterLink } from 'react-router-dom';
 
 const Lessons = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [toastMessage, setToastMessage] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const showToast = (message) => {
+        setToastMessage(message);
+        setTimeout(() => setToastMessage(null), 3000);
+    };
 
     return (
         <div className="flex h-screen bg-[#0B1120] text-slate-300 font-sans overflow-hidden">
@@ -75,12 +83,18 @@ const Lessons = () => {
                             <input
                                 type="text"
                                 placeholder="Find phishing tactics, modules, or security tips..."
-                                className="w-full bg-[#151D2C] border border-slate-700/50 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && searchQuery && showToast(`Searching for: ${searchQuery}`)}
+                                className="w-full bg-[#151D2C] border border-slate-700/50 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 transition-colors"
                             />
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <button className="p-2 text-slate-400 hover:text-white transition-colors relative">
+                        <button 
+                            className="p-2 text-slate-400 hover:text-white transition-colors relative"
+                            onClick={() => showToast('You have 3 new notifications')}
+                        >
                             <Bell size={20} />
                             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500"></span>
                         </button>
@@ -97,7 +111,10 @@ const Lessons = () => {
                                 <h1 className="text-2xl font-bold text-white tracking-tight leading-tight">Active Curriculum</h1>
                                 <p className="text-slate-400 text-sm mt-1">Pick up where you left off or start a new module.</p>
                             </div>
-                            <button className="text-blue-500 text-sm font-semibold hover:text-blue-400 flex items-center gap-1">
+                            <button 
+                                className="text-blue-500 text-sm font-semibold hover:text-blue-400 flex items-center gap-1 transition-colors"
+                                onClick={() => showToast('Loading all modules...')}
+                            >
                                 View All Modules <ChevronRight size={16} />
                             </button>
                         </div>
@@ -130,11 +147,24 @@ const Lessons = () => {
                             </div>
 
                             <div className="flex items-center gap-3">
-                                <button className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-colors flex items-center gap-2">
+                                <button 
+                                    className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-blue-500/20"
+                                    onClick={() => showToast('Resuming Email Basics lesson...')}
+                                >
                                     Resume Lesson <ChevronRight size={18} />
                                 </button>
-                                <button className="p-2.5 rounded-xl border border-slate-700/50 bg-slate-800/30 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
-                                    <Bookmark size={20} />
+                                <button 
+                                    className={`p-2.5 rounded-xl border transition-all active:scale-95 ${
+                                        isBookmarked 
+                                            ? 'bg-blue-500/20 border-blue-500/50 text-blue-400 shadow-inner' 
+                                            : 'border-slate-700/50 bg-slate-800/30 text-slate-400 hover:text-white hover:bg-slate-700'
+                                    }`}
+                                    onClick={() => {
+                                        setIsBookmarked(!isBookmarked);
+                                        showToast(isBookmarked ? 'Lesson removed from bookmarks' : 'Lesson bookmarked!');
+                                    }}
+                                >
+                                    <Bookmark size={20} className={isBookmarked ? 'fill-current' : ''} />
                                 </button>
                             </div>
                         </div>
@@ -156,7 +186,10 @@ const Lessons = () => {
                                     <p className="text-slate-400 text-sm">Homograph Attacks •. 18 mins</p>
                                 </div>
 
-                                <button className="w-full py-2.5 rounded-xl border border-slate-700 bg-slate-800/20 text-slate-300 font-semibold text-sm hover:bg-slate-700 transition-colors">
+                                <button 
+                                    className="w-full py-2.5 rounded-xl border border-slate-700 bg-slate-800/20 text-slate-300 font-semibold text-sm hover:bg-slate-700 transition-all active:scale-[0.98]"
+                                    onClick={() => showToast('Starting Advanced URL Spoofing module...')}
+                                >
                                     Start Module
                                 </button>
                             </div>
@@ -175,7 +208,10 @@ const Lessons = () => {
                                     <p className="text-slate-400 text-sm">Authority & Urgency •. 15 mins</p>
                                 </div>
 
-                                <button className="w-full py-2.5 rounded-xl border border-slate-700 bg-slate-800/20 text-slate-300 font-semibold text-sm hover:bg-slate-700 transition-colors">
+                                <button 
+                                    className="w-full py-2.5 rounded-xl border border-slate-700 bg-slate-800/20 text-slate-300 font-semibold text-sm hover:bg-slate-700 transition-all active:scale-[0.98]"
+                                    onClick={() => showToast('Starting Psychological Triggers module...')}
+                                >
                                     Start Module
                                 </button>
                             </div>
@@ -254,7 +290,10 @@ const Lessons = () => {
                                     <Eye className="text-slate-400" size={24} />
                                 </div>
                             </div>
-                            <button className="w-full text-center text-sm font-semibold text-slate-400 hover:text-white transition-colors">
+                            <button 
+                                className="w-full text-center text-sm font-semibold text-slate-400 hover:text-white transition-colors"
+                                onClick={() => showToast('Loading achievements...')}
+                            >
                                 View Achievements
                             </button>
                         </div>
@@ -269,7 +308,10 @@ const Lessons = () => {
                             <p className="text-blue-100 text-sm mb-6 relative z-10 opacity-90 w-full text-center">
                                 Try the new realistic Microsoft 365 credential harvesting simulation.
                             </p>
-                            <button className="bg-white text-blue-600 font-bold py-2.5 px-6 rounded-xl w-full hover:bg-blue-50 transition-colors shadow-lg relative z-10">
+                            <button 
+                                className="bg-white text-blue-600 font-bold py-2.5 px-6 rounded-xl w-full hover:bg-blue-50 transition-all active:scale-95 shadow-lg relative z-10"
+                                onClick={() => showToast('Preparing Pro Simulation environment...')}
+                            >
                                 Launch Now
                             </button>
                         </div>
@@ -279,10 +321,23 @@ const Lessons = () => {
 
                 {/* Floating Action Button */}
                 <div className="fixed bottom-6 right-6 lg:bottom-8 lg:right-8 z-50">
-                    <button className="w-14 h-14 bg-blue-600 hover:bg-blue-500 rounded-full shadow-xl shadow-blue-500/20 flex items-center justify-center text-white transition-transform hover:scale-105">
+                    <button 
+                        className="w-14 h-14 bg-blue-600 hover:bg-blue-500 rounded-full shadow-xl shadow-blue-500/20 flex items-center justify-center text-white transition-transform hover:scale-105 active:scale-95"
+                        onClick={() => showToast('Opening AI Security Assistant...')}
+                    >
                         <Bot size={28} />
                     </button>
                 </div>
+
+                {/* Toast Notification */}
+                {toastMessage && (
+                    <div className="fixed bottom-24 right-6 lg:bottom-10 lg:right-28 z-50 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="bg-slate-800 text-white px-4 py-3 rounded-xl border border-slate-700 shadow-2xl flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                            <span className="text-sm font-medium">{toastMessage}</span>
+                        </div>
+                    </div>
+                )}
 
             </main>
         </div>
