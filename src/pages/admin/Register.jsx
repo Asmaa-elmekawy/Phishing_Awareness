@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Shield, Mail, Lock, User, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import { useAuth } from '../../hooks/Admin/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { ROUTES_ADMIN } from '../../constants/routes';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -69,7 +70,7 @@ const Register = () => {
             setSuccessMessage('Registration successful! Please check your email to confirm your account.');
             
             setTimeout(() => {
-                navigate('/login', { 
+                navigate(ROUTES_ADMIN.AUTH.LOGIN, { 
                     state: { 
                         message: 'Registration successful! Please login with your credentials after confirming your email.' 
                     }
@@ -250,9 +251,9 @@ const Register = () => {
                 <div className="mt-6 text-center">
                     <p className="text-cyber-text-muted text-sm">
                         Already have an account?{' '}
-                        <a href="/login" className="text-cyber-primary hover:text-cyber-primary/80 transition-colors font-medium">
+                        <Link to={ROUTES_ADMIN.AUTH.LOGIN} className="text-cyber-primary hover:text-cyber-primary/80 transition-colors font-medium">
                             Login here
-                        </a>
+                        </Link>
                     </p>
                 </div>
 

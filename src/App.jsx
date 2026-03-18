@@ -25,6 +25,8 @@ import { ROUTES_ADMIN, ROUTES_WEBSITE } from "./constants/routes";
 import UserSettings from "./pages/admin/UserSettings";
 import Dashboard from "./pages/website/Dashboard";
 import WebsiteLayout from "./pages/website/components/WebsiteLayout";
+import WebsiteLogin from "./pages/website/Login";
+import WebsiteRegister from "./pages/website/Register";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -93,6 +95,8 @@ function App() {
             </WebsiteLayout>
           }
         />
+        <Route path={ROUTES_WEBSITE.AUTH.LOGIN} element={<WebsiteLogin />} />
+        <Route path={ROUTES_WEBSITE.AUTH.REGISTER} element={<WebsiteRegister />} />
         <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
         <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
 
