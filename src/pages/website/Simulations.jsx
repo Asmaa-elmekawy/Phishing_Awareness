@@ -156,11 +156,11 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
                     </div>
                 </header>
 
-                {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto w-full flex flex-col lg:flex-row [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                {/* Scrollable Content (Mobile: Page scrolls, Desktop: Columns scroll independently) */}
+                <div className="flex-1 w-full flex flex-col lg:flex-row lg:overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                     {/* Left Main Settings Panel */}
-                    <div className="flex-1 p-8 lg:border-r border-slate-800/60 flex flex-col">
+                    <div className="flex-1 p-8 pb-32 lg:pb-40 lg:overflow-y-auto lg:border-r border-slate-800/60 flex flex-col lg:[&::-webkit-scrollbar]:hidden lg:[-ms-overflow-style:none] lg:[scrollbar-width:none]">
 
                         {/* Stepper */}
                         <div className="flex items-center mb-10 text-sm font-semibold">
@@ -349,10 +349,10 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
                     </div>
 
                     {/* Right Live Preview Panel */}
-                    <div className="w-full lg:w-[400px] bg-[#0F1523] flex flex-col lg:border-l border-t lg:border-t-0 border-slate-800/60 flex-shrink-0 lg:flex-shrink">
+                    <div className="w-full lg:w-[400px] xl:w-[450px] bg-[#0F1523] flex flex-col lg:h-full lg:min-h-0 lg:border-l border-t lg:border-t-0 border-slate-800/60 flex-shrink-0">
 
                         {/* Header */}
-                        <div className="p-6 pb-4 border-b border-slate-800/60 flex items-center justify-between">
+                        <div className="p-6 pb-4 border-b border-slate-800/60 flex items-center justify-between flex-shrink-0">
                             <h3 className="font-bold text-white text-lg">Live Preview</h3>
                             <div className="flex bg-slate-800/50 p-1 rounded-lg border border-slate-700/50">
                                 <button onClick={() => setPreviewDevice('monitor')} className={`p-1.5 rounded ${previewDevice === 'monitor' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'} transition-colors`}>
@@ -365,8 +365,8 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
                         </div>
 
                         {/* Email Preview Content */}
-                        <div className="flex-none lg:flex-1 p-4 lg:p-6 overflow-y-auto bg-[#0B1120]/50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] flex justify-center">
-                            <div className={`w-full bg-[#151D2C] border border-slate-700/40 rounded-xl overflow-hidden shadow-xl transition-all duration-300 ${previewDevice === 'smartphone' ? 'max-w-[320px]' : 'max-w-none'}`}>
+                        <div className="flex-1 min-h-0 p-4 lg:p-6 overflow-y-auto bg-[#0B1120]/50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] flex justify-center items-start">
+                            <div className={`w-full bg-[#151D2C] border border-slate-700/40 rounded-xl overflow-hidden shadow-xl transition-all duration-300 ${previewDevice === 'smartphone' ? 'max-w-[320px]' : 'max-w-none'} mb-4`}>
 
                                 {/* Email Header */}
                                 <div className="p-4 border-b border-slate-700/40 bg-slate-800/20 text-xs text-slate-300 space-y-2">
@@ -386,7 +386,7 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
                                         <activeTemplate.previewIcon size={28} className="text-white" />
                                     </div>
 
-                                    <h4 className="text-lg font-semibold text-white mb-6">{activeTemplate.alertTitle}</h4>
+                                    <h4 className="text-lg font-semibold text-white mb-6 text-center">{activeTemplate.alertTitle}</h4>
 
                                     <p className="text-slate-300 text-sm mb-6 text-center">{activeTemplate.greeting}</p>
 
@@ -394,11 +394,13 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
                                         {activeTemplate.bodyText}
                                     </p>
 
-                                    <button className={`text-white font-medium py-2.5 px-6 rounded w-full mb-8 transition-colors ${activeTemplate.buttonColor}`}>
-                                        {activeTemplate.buttonText}
-                                    </button>
+                                    <div className="w-full relative py-2">
+                                        <button className={`text-white font-medium py-3 px-6 rounded-lg w-full mb-8 transition-colors ${activeTemplate.buttonColor}`}>
+                                            {activeTemplate.buttonText}
+                                        </button>
+                                    </div>
 
-                                    <div className="text-[10px] text-slate-500 text-center mt-auto whitespace-pre-line">
+                                    <div className="text-[10px] text-slate-500 text-center mt-auto whitespace-pre-line leading-relaxed">
                                         {activeTemplate.footerText}
                                     </div>
                                 </div>
@@ -407,7 +409,7 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
                         </div>
 
                         {/* Bottom Actions */}
-                        <div className="p-6 bg-[#0F1523] border-t border-slate-800/60 z-10">
+                        <div className="p-6 bg-[#0F1523] border-t border-slate-800/60 z-10 mt-auto flex-shrink-0">
 
                             <div className={`${activeTemplate.impactBg} border ${activeTemplate.impactBorderColor} rounded-xl p-4 flex gap-3 mb-6`}>
                                 <AlertCircle className={`${activeTemplate.impactColor} flex-shrink-0`} size={20} />

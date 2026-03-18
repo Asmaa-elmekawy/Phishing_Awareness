@@ -32,10 +32,10 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
             </header>
 
             {/* Content Area */}
-            <div className="flex-1 overflow-y-auto w-full flex flex-col lg:flex-row [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="flex-1 w-full flex flex-col lg:flex-row lg:overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                 {/* Left Panel: Simulated Inbox */}
-                <div className="flex-[3] p-8 lg:border-r border-slate-800/60 bg-[#0B1120]">
+                <div className="flex-[3] p-8 pb-32 lg:pb-40 lg:overflow-y-auto lg:border-r border-slate-800/60 bg-[#0B1120] lg:[&::-webkit-scrollbar]:hidden lg:[-ms-overflow-style:none] lg:[scrollbar-width:none]">
 
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Simulated Inbox</h2>
@@ -96,26 +96,26 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
 
                     {/* Legend */}
                     <div className="flex gap-4 mt-6 max-w-2xl">
-                        <div className="flex items-center gap-2 px-4 py-2 bg-[#151D2C] border border-slate-700/40 rounded-xl flex-1 justify-center opacity-80">
-                            <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                            <span className="text-xs font-medium text-slate-400">Threat Detected</span>
+                        <div className="flex items-center gap-2.5 px-5 py-3.5 bg-[#151D2C] border border-slate-700/40 rounded-xl flex-1 justify-center opacity-80">
+                            <div className="w-3 h-3 rounded-full bg-red-500 flex-shrink-0"></div>
+                            <span className="text-sm font-medium text-slate-400">Threat Detected</span>
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2 bg-[#151D2C] border border-slate-700/40 rounded-xl flex-1 justify-center opacity-80">
-                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-                            <span className="text-xs font-medium text-slate-400">Safe Element</span>
+                        <div className="flex items-center gap-2.5 px-5 py-3.5 bg-[#151D2C] border border-slate-700/40 rounded-xl flex-1 justify-center opacity-80">
+                            <div className="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0"></div>
+                            <span className="text-sm font-medium text-slate-400">Safe Element</span>
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2 bg-[#151D2C] border border-slate-700/40 rounded-xl flex-1 justify-center opacity-80">
-                            <div className="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
-                            <span className="text-xs font-medium text-slate-400">Interactive Link</span>
+                        <div className="flex items-center gap-2.5 px-5 py-3.5 bg-[#151D2C] border border-slate-700/40 rounded-xl flex-1 justify-center opacity-80">
+                            <div className="w-3 h-3 rounded-full bg-blue-500 flex-shrink-0"></div>
+                            <span className="text-sm font-medium text-slate-400">Interactive Link</span>
                         </div>
                     </div>
 
                 </div>
 
                 {/* Right Panel: Analysis & Breakdown */}
-                <div className="flex-[2] bg-[#0F1523] flex flex-col relative min-w-[380px] max-w-[500px]">
+                <div className="flex-[2] bg-[#0F1523] flex flex-col relative min-w-[380px] max-w-[500px] lg:h-full lg:min-h-0 border-t lg:border-t-0 border-slate-800/60">
 
-                    <div className="p-8 pb-4 border-b border-slate-800/60">
+                    <div className="p-8 pb-4 border-b border-slate-800/60 flex-shrink-0">
                         <div className="flex justify-between items-end mb-4">
                             <h2 className="text-xl font-bold text-white">Analysis & Breakdown</h2>
                             <div className="text-sm font-semibold text-blue-400">3 of 3 flags found</div>
@@ -126,7 +126,7 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
                         </div>
                     </div>
 
-                    <div className="flex-1 p-8 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    <div className="flex-1 min-h-0 p-8 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                         <h3 className="text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-6">Threat Indicators</h3>
 
                         <div className="space-y-4">
@@ -201,7 +201,7 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
                     </div>
 
                     {/* Bottom Actions */}
-                    <div className="p-8 bg-[#0F1523]">
+                    <div className="p-8 bg-[#0F1523] mt-auto flex-shrink-0">
                         <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
                             Continue to Quiz <ArrowRight size={20} />
                         </button>
