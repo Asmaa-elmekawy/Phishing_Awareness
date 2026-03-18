@@ -31,4 +31,5 @@ export const ROUTES_WEBSITE = {
   ANALYTICS: "/analytics",
   SIMULATIONS: "/simulations",
   LESSONS: "/lessons",
+  DASHBOARD: "/dashboard",
 };

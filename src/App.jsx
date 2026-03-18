@@ -23,6 +23,8 @@ import LessonDetailPage from "./pages/admin/LessonDetailPage";
 import QuestionDetailPage from "./pages/admin/QuestionDetailPage";
 import { ROUTES_ADMIN, ROUTES_WEBSITE } from "./constants/routes";
 import UserSettings from "./pages/admin/UserSettings";
+import Dashboard from "./pages/website/Dashboard";
+import WebsiteLayout from "./pages/website/components/WebsiteLayout";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -59,9 +61,38 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path={ROUTES_WEBSITE.LESSONS} element={<Lessons />} />
-        <Route path={ROUTES_WEBSITE.SIMULATIONS} element={<Simulations />} />
-        <Route path={ROUTES_WEBSITE.ANALYTICS} element={<Analytics />} />
+        <Route
+          path={ROUTES_WEBSITE.LESSONS}
+          element={
+            <WebsiteLayout>
+              <Lessons />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.SIMULATIONS}
+          element={
+            <WebsiteLayout>
+              <Simulations />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.ANALYTICS}
+          element={
+            <WebsiteLayout>
+              <Analytics />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.DASHBOARD}
+          element={
+            <WebsiteLayout>
+              <Dashboard />
+            </WebsiteLayout>
+          }
+        />
         <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
         <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
 
