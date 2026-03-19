@@ -1,5 +1,6 @@
 import React from 'react';
 import { Shield, Bell, Zap, ChevronRight, MessageSquare, Settings } from 'lucide-react';
+import { motion as Motion } from 'framer-motion';
 import StatsCards from './components/StatsCards';
 import WeeklyGoalCard from './components/WeeklyGoalCard';
 import PhishOfTheDay from './components/PhishOfTheDay';
@@ -13,7 +14,12 @@ const Dashboard = ({ setIsMobileMenuOpen }) => {
             <div className="max-w-[1400px] mx-auto space-y-10">
 
                 {/* Header Section */}
-                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <Motion.header 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex flex-col md:flex-row md:items-center justify-between gap-6"
+                >
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <button
@@ -41,20 +47,30 @@ const Dashboard = ({ setIsMobileMenuOpen }) => {
                             <span className="text-sm font-bold text-white">7 Days Streak</span>
                         </div>
                     </div>
-                </header>
+                </Motion.header>
 
                 {/* Main Dashboard Grid */}
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 items-start">
 
                     {/* Left Column (Main Content) */}
-                    <div className="xl:col-span-2 space-y-4">
+                    <Motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="xl:col-span-2 space-y-4"
+                    >
                         <StatsCards />
                         <PhishOfTheDay image={PhishLogo} />
                         <ActiveCurriculum />
-                    </div>
+                    </Motion.div>
 
                     {/* Right Column (Sidebar Content) */}
-                    <div className="xl:col-span-1 space-y-10">
+                    <Motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        className="xl:col-span-1 space-y-10"
+                    >
                         <WeeklyGoalCard />
                         <RecommendedLessons />
 
@@ -87,7 +103,7 @@ const Dashboard = ({ setIsMobileMenuOpen }) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Motion.div>
                 </div>
             </div>
 

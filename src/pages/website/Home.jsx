@@ -12,12 +12,20 @@ const Home = () => {
             <p className="text-slate-400 mb-8 max-w-md text-center">
                 "Learn to protect yourself here."
             </p>
-            <Link
-                to="/dashboard"
-                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors"
-            >
-                Go to WEBSITE
-            </Link>
+            <div className="flex gap-4">
+                <Link
+                    to="/login"
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-600/20 active:scale-95"
+                >
+                    Login
+                </Link>
+                <Link
+                    to="/dashboard"
+                    className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-all active:scale-95"
+                >
+                    Go to Dashboard
+                </Link>
+            </div>
         </div>
     );
 };

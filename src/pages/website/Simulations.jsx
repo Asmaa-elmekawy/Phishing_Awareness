@@ -5,6 +5,7 @@ import {
     UploadCloud, Circle, Dot, Smartphone, Monitor, AlertCircle, Rocket,
     FileText, X, Menu
 } from 'lucide-react';
+import { motion as Motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 
 const templatesData = [
@@ -134,7 +135,7 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
         <>
             {/* Main Content Area */}
             {/* Top Header */}
-            <header className="h-20 border-b border-slate-800/60 px-4 md:px-8 flex items-center justify-between shadow-sm z-10 bg-[#0B1120]/80 backdrop-blur-md flex-shrink-0">
+            <Motion.header initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="h-20 border-b border-slate-800/60 px-4 md:px-8 flex items-center justify-between shadow-sm z-10 bg-[#0B1120]/80 backdrop-blur-md flex-shrink-0">
                 <div className="flex items-center gap-3">
                     <button
                         className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50"
@@ -154,13 +155,13 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
                             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-[#0B1120]"></span>
                         </button>
                     </div>
-                </header>
+                </Motion.header>
 
                 {/* Scrollable Content (Mobile: Page scrolls, Desktop: Columns scroll independently) */}
                 <div className="flex-1 w-full flex flex-col lg:flex-row lg:overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                     {/* Left Main Settings Panel */}
-                    <div className="flex-1 p-8 pb-32 lg:pb-40 lg:overflow-y-auto lg:border-r border-slate-800/60 flex flex-col lg:[&::-webkit-scrollbar]:hidden lg:[-ms-overflow-style:none] lg:[scrollbar-width:none]">
+                    <Motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="flex-1 p-8 pb-32 lg:pb-40 lg:overflow-y-auto lg:border-r border-slate-800/60 flex flex-col lg:[&::-webkit-scrollbar]:hidden lg:[-ms-overflow-style:none] lg:[scrollbar-width:none]">
 
                         {/* Stepper */}
                         <div className="flex items-center mb-10 text-sm font-semibold">
@@ -346,10 +347,10 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
 
                         </section>
 
-                    </div>
+                    </Motion.div>
 
                     {/* Right Live Preview Panel */}
-                    <div className="w-full lg:w-[400px] xl:w-[450px] bg-[#0F1523] flex flex-col lg:h-full lg:min-h-0 lg:border-l border-t lg:border-t-0 border-slate-800/60 flex-shrink-0">
+                    <Motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="w-full lg:w-[400px] xl:w-[450px] bg-[#0F1523] flex flex-col lg:h-full lg:min-h-0 lg:border-l border-t lg:border-t-0 border-slate-800/60 flex-shrink-0 lg:flex-shrink">
 
                         {/* Header */}
                         <div className="p-6 pb-4 border-b border-slate-800/60 flex items-center justify-between flex-shrink-0">
@@ -436,7 +437,7 @@ const Simulations = ({ setIsMobileMenuOpen }) => {
 
                         </div>
 
-                    </div>
+                    </Motion.div>
                 </div>
         </>
     );
