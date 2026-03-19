@@ -5,7 +5,8 @@ import {
     Flame, Medal, Shield, Search as SearchIcon, Eye,
     MessageSquare,
     ShieldCheck,
-    ShieldCheckIcon
+    ShieldCheckIcon,
+    Bot
 } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 
@@ -247,7 +248,7 @@ const Lessons = ({ setIsMobileMenuOpen }) => {
             {/* Floating Bot Button */}
             <div className="absolute bottom-6 right-6 z-20 hidden md:block">
                 <button className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/30 hover:scale-105 transition-transform">
-                    <MessageSquare size={24} className="text-white fill-white" />
+                    <Bot size={24} className="text-white" />
                 </button>
             </div>
         </div>
