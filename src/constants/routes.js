@@ -36,4 +36,5 @@ export const ROUTES_WEBSITE = {
   SIMULATIONS: "/simulations",
   LESSONS: "/lessons",
   DASHBOARD: "/dashboard",
+  SETTINGS: "/settings",
 };

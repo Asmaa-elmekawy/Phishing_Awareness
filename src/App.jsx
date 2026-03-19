@@ -27,6 +27,7 @@ import Dashboard from "./pages/website/Dashboard";
 import WebsiteLayout from "./pages/website/components/WebsiteLayout";
 import WebsiteLogin from "./pages/website/Login";
 import WebsiteRegister from "./pages/website/Register";
+import Settings from "./pages/website/Settings";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -92,6 +93,14 @@ function App() {
           element={
             <WebsiteLayout>
               <Dashboard />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.SETTINGS}
+          element={
+            <WebsiteLayout>
+              <Settings />
             </WebsiteLayout>
           }
         />
