@@ -28,6 +28,7 @@ const LessonQuestionsPage = () => {
         error,
         isCompleted,
         handleAnswer,
+        retry,
         totalQuestions
     } = useLessonQuestions(lessonId);
 
@@ -135,7 +136,7 @@ const LessonQuestionsPage = () => {
                                 Continue Learning <ChevronRight size={20} />
                             </button>
                             <button
-                                onClick={() => window.location.reload()}
+                                onClick={retry}
                                 className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl font-bold transition-all active:scale-[0.98]"
                             >
                                 Retry Module

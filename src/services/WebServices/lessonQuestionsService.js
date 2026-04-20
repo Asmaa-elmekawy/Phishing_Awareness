@@ -45,10 +45,18 @@ class LessonQuestionsService {
 
   handleError(error) {
     if (error.response) {
+      const data = error.response.data;
+      let message = data?.message || 'حدث خطأ في السيرفر';
+      
+      // If there are specific errors from the backend, use the last one (usually descriptive)
+      if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+        message = data.errors[data.errors.length - 1];
+      }
+      
       return {
         status: error.response.status,
-        message: error.response.data?.message || 'حدث خطأ في السيرفر',
-        data: error.response.data
+        message: message,
+        data: data
       };
     } else if (error.request) {
       return {

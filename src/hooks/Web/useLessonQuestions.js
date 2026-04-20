@@ -22,18 +22,37 @@ export const useLessonQuestions = (lessonId) => {
       setQuestions(allQuestions);
       
       // Get current question (progress)
-      const currentQ = await lessonQuestionsService.getNextQuestion(lessonId);
-      console.log("📦 Current question (resumed):", currentQ);
-      
-      if (currentQ && currentQ.questionId) {
-        setCurrentQuestion(currentQ);
-        // Find index in the full list
-        const index = allQuestions.findIndex(q => q.questionId === currentQ.questionId);
-        setCurrentIndex(index !== -1 ? index : 0);
-      } else if (allQuestions.length > 0) {
-        // If no next question, might be completed
-        setCurrentQuestion(allQuestions[0]);
-        setCurrentIndex(0);
+      try {
+        const currentQ = await lessonQuestionsService.getNextQuestion(lessonId);
+        console.log("📦 Current question (resumed):", currentQ);
+        
+        if (currentQ && currentQ.questionId) {
+          setCurrentQuestion(currentQ);
+          // Find index in the full list
+          const index = allQuestions.findIndex(q => q.questionId === currentQ.questionId);
+          setCurrentIndex(index !== -1 ? index : 0);
+        } else if (allQuestions.length > 0) {
+          // If no next question from server, but we have questions, check if we should show results
+          try {
+            await fetchLessonResult();
+          } catch (resErr) {
+            // If result fetch fails, just default to first question
+            setCurrentQuestion(allQuestions[0]);
+            setCurrentIndex(0);
+          }
+        }
+      } catch (err) {
+        const isLessonCompleted = 
+          (err.data?.errors && err.data.errors.some(e => e.includes("Lesson Completed") || e.includes("lesson completed"))) ||
+          (err.message && (err.message.includes("Lesson Completed") || err.message.includes("lesson completed")));
+        
+        if (isLessonCompleted) {
+          await fetchLessonResult();
+        } else if (allQuestions.length > 0) {
+          // Fallback to first question if getNextQuestion fails but we have questions
+          setCurrentQuestion(allQuestions[0]);
+          setCurrentIndex(0);
+        }
       }
       return allQuestions;
     } catch (err) {
@@ -88,10 +107,18 @@ export const useLessonQuestions = (lessonId) => {
       
       return data;
     } catch (err) {
-      // Handle "Already Answered" gracefully
-      if (err.data && (err.data.errors?.includes("Question.AlreadyAnswered") || err.message?.includes("already answerd"))) {
-        console.warn("⚠️ Question already answered, skipping...");
-        return { isAlreadyAnswered: true };
+      // Handle "Already Answered" or "Completed" gracefully
+      const isAlreadyAnswered = 
+        (err.data?.errors && err.data.errors.some(e => e.includes("AlreadyAnswered") || e.includes("already answerd"))) ||
+        (err.message && (err.message.includes("AlreadyAnswered") || err.message.includes("already answerd")));
+
+      const isLessonCompleted = 
+        (err.data?.errors && err.data.errors.some(e => e.includes("Lesson Completed") || e.includes("lesson completed"))) ||
+        (err.message && (err.message.includes("Lesson Completed") || err.message.includes("lesson completed")));
+
+      if (isAlreadyAnswered || isLessonCompleted) {
+        console.warn("⚠️ Already answered or lesson completed, moving on...");
+        return { isAlreadyAnswered: true, isLessonCompleted: isLessonCompleted };
       }
       
       console.error("❌ Error submitting answer:", err);
@@ -124,15 +151,41 @@ export const useLessonQuestions = (lessonId) => {
 
   // معالجة الإجابة والانتقال للسؤال التالي
   const handleAnswer = async (questionId, answerId) => {
-    await submitAnswer(questionId, answerId);
-    
+    try {
+      const response = await submitAnswer(questionId, answerId);
+      
+      // If lesson is already completed, show results
+      if (response?.isLessonCompleted) {
+        await fetchLessonResult();
+        return;
+      }
+    } catch (err) {
+      // If we are retrying and it's already answered, just ignore and move on
+      console.warn("Retrying mode: skipping server error for already answered question");
+    }
+
     // بعد الإجابة، نجيب السؤال التالي
-    const nextQuestion = await fetchNextQuestion();
+    const nextQuestion = questions[currentIndex + 1];
     
     // لو مفيش سؤال تاني، نروح للنتيجة
-    if (!nextQuestion || !nextQuestion.questionId) {
+    if (!nextQuestion) {
+      setIsCompleted(true);
       await fetchLessonResult();
+    } else {
+      setCurrentQuestion(nextQuestion);
+      setCurrentIndex(prev => prev + 1);
     }
+  };
+
+  // وظيفة إعادة البدء (Retry) محلياً
+  const retry = async () => {
+    setIsCompleted(false);
+    setResult(null);
+    setCurrentIndex(0);
+    if (questions.length > 0) {
+      setCurrentQuestion(questions[0]);
+    }
+    setError("");
   };
 
   // إعادة تعيين الحالة (لما نخرج من الدرس)
@@ -175,6 +228,7 @@ export const useLessonQuestions = (lessonId) => {
     fetchLessonResult,
     handleAnswer,
     resetLesson,
+    retry,
     
     // معلومات مفيدة
     totalQuestions: questions.length,
