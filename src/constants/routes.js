@@ -35,6 +35,7 @@ export const ROUTES_WEBSITE = {
   ANALYTICS: "/analytics",
   SIMULATIONS: "/simulations",
   LESSONS: "/lessons",
+  LESSON_QUESTIONS: "/lessons/:lessonId/questions",
   DASHBOARD: "/dashboard",
   SETTINGS: "/settings",
 };

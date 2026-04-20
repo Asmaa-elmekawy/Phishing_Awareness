@@ -28,6 +28,7 @@ import WebsiteLayout from "./pages/website/components/WebsiteLayout";
 import WebsiteLogin from "./pages/website/Login";
 import WebsiteRegister from "./pages/website/Register";
 import Settings from "./pages/website/Settings";
+import LessonQuestionsPage from "./pages/website/LessonQuestionsPage";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -101,6 +102,14 @@ function App() {
           element={
             <WebsiteLayout>
               <Settings />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.LESSON_QUESTIONS}
+          element={
+            <WebsiteLayout>
+              <LessonQuestionsPage />
             </WebsiteLayout>
           }
         />

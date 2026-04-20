@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import { useLessonCards } from '../../hooks/Web/useLessonCard';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES_WEBSITE } from '../../constants/routes';
 
 const getIcon = (iconName, size = 20) => {
     if (!iconName) return <BookOpen size={size} />;
@@ -25,7 +27,7 @@ const getIcon = (iconName, size = 20) => {
 const Lessons = ({ setIsMobileMenuOpen }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const { lessons, activeLessons, loading, fetchActiveLessons } = useLessonCards();
-
+    const navigate = useNavigate();
     useEffect(() => {
         fetchActiveLessons();
     }, []);
@@ -115,7 +117,7 @@ const Lessons = ({ setIsMobileMenuOpen }) => {
                                         </div>
 
                                         <div className="flex items-center gap-3">
-                                            <button className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 text-sm">
+                                            <button onClick={() => navigate(ROUTES_WEBSITE.LESSON_QUESTIONS.replace(':lessonId', activeModule.lessonId))} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 text-sm">
                                                 Resume Lesson <Play size={16} fill="currentColor" />
                                             </button>
                                             <button className="p-2.5 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl transition-colors border border-slate-700/50 flex-shrink-0">
@@ -190,7 +192,10 @@ const Lessons = ({ setIsMobileMenuOpen }) => {
                                         <h3 className="font-bold mb-1">{lesson.title || 'Untitled Module'}</h3>
                                         <p className="text-xs text-slate-400 mb-6">{lesson.description || `${lesson.topic || 'Topic'} • ${lesson.duration || '15 mins'}`}</p>
 
-                                        <button className="mt-auto w-full py-2.5 bg-slate-800/30 hover:bg-slate-800 border border-slate-700/50 text-slate-300 text-sm font-bold rounded-xl transition-all">
+                                        <button 
+                                            onClick={() => navigate(ROUTES_WEBSITE.LESSON_QUESTIONS.replace(':lessonId', lesson.lessonId))}
+                                            className="mt-auto w-full py-2.5 bg-slate-800/30 hover:bg-slate-800 border border-slate-700/50 text-slate-300 text-sm font-bold rounded-xl transition-all"
+                                        >
                                             Start Module
                                         </button>
                                     </Motion.div>
