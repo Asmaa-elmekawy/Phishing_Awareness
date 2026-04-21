@@ -160,8 +160,8 @@ export const useLessonQuestions = (lessonId) => {
         return;
       }
     } catch (err) {
-      // If we are retrying and it's already answered, just ignore and move on
-      console.warn("Retrying mode: skipping server error for already answered question");
+      // Still good to handle "Already Answered" just in case of race conditions
+      console.warn("Retrying mode: skipping server error for already answered question", err);
     }
 
     // بعد الإجابة، نجيب السؤال التالي
@@ -177,15 +177,29 @@ export const useLessonQuestions = (lessonId) => {
     }
   };
 
-  // وظيفة إعادة البدء (Retry) محلياً
+  // وظيفة إعادة البدء (Retry) - Server Reset + State Reset
   const retry = async () => {
-    setIsCompleted(false);
-    setResult(null);
-    setCurrentIndex(0);
-    if (questions.length > 0) {
-      setCurrentQuestion(questions[0]);
+    if (!lessonId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // 1. مسح التقدم على السيرفر
+      await lessonQuestionsService.resetLessonProgress(lessonId);
+      
+      // 2. تصفير الحالة محلياً
+      setResult(null);
+      setIsCompleted(false);
+      setCurrentIndex(0);
+      setAnswers([]);
+      
+      // 3. إعادة جلب الأسئلة من جديد
+      await fetchLessonQuestions();
+    } catch (err) {
+      console.error("❌ Failed to reset lesson:", err);
+      setError("Failed to restart the lesson. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setError("");
   };
 
   // إعادة تعيين الحالة (لما نخرج من الدرس)

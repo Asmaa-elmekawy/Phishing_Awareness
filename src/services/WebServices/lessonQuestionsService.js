@@ -1,9 +1,7 @@
-// services/lessonQuestionsService.js
 
 import axiosInstance from "../AdminServices/axiosConfig";
 
 class LessonQuestionsService {
-  // GET /api/lessons/{lessonId}/questions - جلب كل أسئلة الدرس
   async getLessonQuestions(lessonId) {
     try {
       const response = await axiosInstance.get(`/api/lessons/${lessonId}/questions`);
@@ -13,7 +11,6 @@ class LessonQuestionsService {
     }
   }
 
-  // GET /api/lessons/{lessonId}/next-question - جلب السؤال التالي
   async getNextQuestion(lessonId) {
     try {
       const response = await axiosInstance.get(`/api/lessons/${lessonId}/next-question`);
@@ -23,7 +20,6 @@ class LessonQuestionsService {
     }
   }
 
-  // POST /api/lessons/{lessonId}/answer - إرسال إجابة
   async submitAnswer(lessonId, answerData) {
     try {
       const response = await axiosInstance.post(`/api/lessons/${lessonId}/answer`, answerData);
@@ -33,10 +29,18 @@ class LessonQuestionsService {
     }
   }
 
-  // GET /api/lessons/{lessonId}/result - جلب نتيجة الدرس
   async getLessonResult(lessonId) {
     try {
       const response = await axiosInstance.get(`/api/lessons/${lessonId}/result`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async resetLessonProgress(lessonId) {
+    try {
+      const response = await axiosInstance.delete(`/api/lessons/${lessonId}/reset`);
       return response.data;
     } catch (error) {
       throw this.handleError(error);

@@ -74,7 +74,7 @@ const LessonQuestionsPage = () => {
     // --- Completion State ---
     if (isCompleted && result) {
         const isPassed = result.passed;
-        const scorePercentage = (result.score / (result.totalQuestions * 10)) * 100;
+        const scorePercentage = (result.correctAnswers / totalQuestions) * 100 || 0;
 
         return (
             <div className="min-h-screen bg-[#0a0f1d] text-white p-6 md:p-12 flex items-center justify-center relative overflow-hidden">
@@ -86,60 +86,103 @@ const LessonQuestionsPage = () => {
 
                 <div className="max-w-xl w-full z-10">
                     <Motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#111827]/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl text-center"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-[#111827]/80 backdrop-blur-2xl border border-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-[0_0_50px_rgba(0,0,0,0.3)] text-center relative overflow-hidden"
                     >
-                        <div className={`w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-inner ${isPassed ? "bg-green-500/20 text-green-400 shadow-green-500/10" : "bg-red-500/20 text-red-400 shadow-red-500/10"
-                            }`}>
-                            {isPassed ? <Trophy size={48} /> : <XCircle size={48} />}
+                        {/* Decorative Background Elements */}
+                        <div className={`absolute top-0 right-0 w-32 h-32 blur-[60px] opacity-20 pointer-events-none ${isPassed ? "bg-green-500" : "bg-red-500"}`} />
+                        <div className={`absolute bottom-0 left-0 w-32 h-32 blur-[60px] opacity-20 pointer-events-none ${isPassed ? "bg-blue-500" : "bg-purple-500"}`} />
+
+                        {/* Top Badge */}
+                        <div className="flex justify-center mb-10">
+                            <Motion.div
+                                initial={{ y: -20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                className={`px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 ${isPassed ? "bg-green-500/10 border-green-500/20 text-green-400" : "bg-red-500/10 border-red-500/20 text-red-400"
+                                    }`}
+                            >
+                                <div className={`w-1.5 h-1.5 rounded-full ${isPassed ? "bg-green-400 animate-pulse" : "bg-red-400"}`} />
+                                Lesson {isPassed ? "Assessment Passed" : "Assessment Failed"}
+                            </Motion.div>
                         </div>
 
-                        <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight">
-                            {isPassed ? "Great Work!" : "Try Again!"}
+                        {/* Circular Progress Section */}
+                        <div className="relative w-40 h-40 mx-auto mb-6">
+                            <svg className="w-full h-full transform -rotate-90">
+                                <circle
+                                    cx="80"
+                                    cy="80"
+                                    r="74"
+                                    stroke="currentColor"
+                                    strokeWidth="12"
+                                    fill="transparent"
+                                    className="text-slate-700/50"
+                                />
+                                <Motion.circle
+                                    cx="80"
+                                    cy="80"
+                                    r="74"
+                                    stroke="currentColor"
+                                    strokeWidth="12"
+                                    strokeLinecap="round"
+                                    fill="transparent"
+                                    initial={{ pathLength: 0 }}
+                                    animate={{ pathLength: Math.min(scorePercentage / 100, 1) }}
+                                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                                    className={`drop-shadow-[0_0_8px_rgba(var(--color-shadow))] ${isPassed ? "text-green-500" : "text-red-500"
+                                        }`}
+                                />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className="text-4xl font-black text-white tracking-tighter">
+                                    {Math.round(Math.min(scorePercentage, 100))}%
+                                </span>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Accuracy</span>
+                            </div>
+                        </div>
+
+                        <h2 className="text-3xl md:text-3xl font-extrabold mb-2 tracking-tight text-white px-4">
+                            {isPassed ? "Mission Accomplished" : "Analysis Incomplete"}
                         </h2>
-                        <p className="text-slate-400 mb-10 text-lg leading-relaxed">
+                        <p className="text-slate-400 mb-6 text-sm leading-relaxed max-w-sm mx-auto">
                             {isPassed
-                                ? "You've successfully mastered this module's concepts."
-                                : "Keep practicing to reinforce your security awareness."}
+                                ? "Excellent recognition patterns. You've demonstrated superior security awareness."
+                                : "The detection scan reveals vulnerabilities. Review the concepts and initiate a retry."}
                         </p>
 
-                        <div className="grid grid-cols-2 gap-4 mb-8">
-                            <div className="bg-[#1a2233] border border-slate-700/50 rounded-2xl p-6 transition-transform hover:scale-[1.02]">
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Final Score</p>
-                                <p className="text-3xl font-black text-blue-400">{result.score}</p>
+                        {/* Stats Dashboard */}
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+                            <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-4 transition-all hover:border-slate-700">
+                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Score</p>
+                                <p className="text-2xl font-black text-blue-400">{result.score}</p>
                             </div>
-                            <div className="bg-[#1a2233] border border-slate-700/50 rounded-2xl p-6 transition-transform hover:scale-[1.02]">
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Accuracy</p>
-                                <p className={`text-3xl font-black ${isPassed ? "text-green-400" : "text-yellow-400"}`}>
-                                    {Math.round(scorePercentage)}%
-                                </p>
+                            <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-4 transition-all hover:border-slate-700">
+                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total</p>
+                                <p className="text-2xl font-black text-white">{result.totalQuestions}</p>
+                            </div>
+                            <div className="bg-green-500/5 border border-green-500/10 rounded-2xl p-4 transition-all hover:border-green-500/20">
+                                <p className="text-[9px] font-black text-green-500/50 uppercase tracking-widest mb-1 font-bold">Passed</p>
+                                <p className="text-2xl font-black text-green-400">{result.correctAnswers}</p>
+                            </div>
+                            <div className="bg-red-500/5 border border-red-500/10 rounded-2xl p-4 transition-all hover:border-red-500/20">
+                                <p className="text-[9px] font-black text-red-500/50 uppercase tracking-widest mb-1 font-bold">Failed</p>
+                                <p className="text-2xl font-black text-red-400">{result.wrongAnswers}</p>
                             </div>
                         </div>
 
-                        {/* Progress Visualization */}
-                        <div className="relative h-3 w-full bg-slate-800 rounded-full overflow-hidden mb-10 shadow-inner">
-                            <Motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${scorePercentage}%` }}
-                                transition={{ duration: 1, ease: "easeOut" }}
-                                className={`absolute inset-y-0 left-0 rounded-full shadow-[0_0_12px_rgba(34,197,94,0.4)] ${isPassed ? "bg-gradient-to-r from-green-500 to-emerald-400" : "bg-gradient-to-r from-yellow-500 to-orange-400"
-                                    }`}
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col sm:flex-row gap-3">
                             <button
                                 onClick={() => navigate(ROUTES_WEBSITE.LESSONS)}
-                                className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all active:scale-[0.98] shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2"
+                                className="flex-1 py-4 px-6 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3"
                             >
-                                Continue Learning <ChevronRight size={20} />
+                                Continue To Next Phase <ChevronRight size={18} />
                             </button>
                             <button
                                 onClick={retry}
-                                className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl font-bold transition-all active:scale-[0.98]"
+                                className="flex-1 py-4 px-6 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                             >
-                                Retry Module
+                                <Star size={16} /> Re-evaluate Module
                             </button>
                         </div>
                     </Motion.div>
