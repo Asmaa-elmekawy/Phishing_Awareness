@@ -100,8 +100,8 @@ const ActiveCurriculum = () => {
 
                 {/* Always try to show a locked lesson if we have enough lessons */}
                 {(() => {
-                    const lockedLesson = (lessons || []).find(l => 
-                        (l.status?.toLowerCase() === 'locked' || l.isLocked) && 
+                    const lockedLesson = (lessons || []).find(l =>
+                        (l.status?.toLowerCase() === 'locked' || l.isLocked) &&
                         !activeLessons.some(a => a.lessonId === l.lessonId)
                     );
 
@@ -124,11 +124,11 @@ const ActiveCurriculum = () => {
                                             Locked Content • <Lock size={12} /> Milestone Required
                                         </p>
                                     </div>
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest pl-2 pt-1 text-right">
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-[13px] font-black text-slate-600 uppercase tracking-widest text-right">
                                             {lockedLesson.status || 'Locked'}
                                         </span>
-                                        <Lock size={16} className="text-slate-700" />
+                                        <Lock size={18} className="text-slate-700" />
                                     </div>
                                 </div>
                                 <div className="h-1.5 bg-slate-800/30 rounded-full overflow-hidden">
