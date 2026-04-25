@@ -38,4 +38,5 @@ export const ROUTES_WEBSITE = {
   LESSON_QUESTIONS: "/lessons/:lessonId/questions",
   DASHBOARD: "/dashboard",
   SETTINGS: "/settings",
+  AI: "/ai",
 };

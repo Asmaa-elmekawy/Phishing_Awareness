@@ -36,7 +36,7 @@ const WebsiteLayout = ({ children }) => {
                         <NavItem icon={<BookOpen size={20} />} label="Lessons" to={ROUTES_WEBSITE.LESSONS} />
                         <NavItem icon={<Microscope size={20} />} label="Simulations" to={ROUTES_WEBSITE.SIMULATIONS} />
                         <NavItem icon={<BarChart3 size={20} />} label="Analytics" to={ROUTES_WEBSITE.ANALYTICS} />
-                        <NavItem icon={<Bot size={20} />} label="Ai" to="/ai" />
+                        <NavItem icon={<Bot size={20} />} label="Ai" to={ROUTES_WEBSITE.AI} />
 
                         <div className="pt-6 pb-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             Account

@@ -12,6 +12,7 @@ import Home from "./pages/website/Home";
 import Lessons from "./pages/website/Lessons";
 import Simulations from "./pages/website/Simulations";
 import Analytics from "./pages/website/Analytics";
+import Ai from "./pages/website/Ai";
 
 import Sidebar from "./pages/admin/components/common/Sidebar";
 import Header from "./pages/admin/components/common/Header";
@@ -102,6 +103,14 @@ function App() {
           element={
             <WebsiteLayout>
               <Settings />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.AI}
+          element={
+            <WebsiteLayout>
+              <Ai />
             </WebsiteLayout>
           }
         />
