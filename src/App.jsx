@@ -12,6 +12,7 @@ import Home from "./pages/website/Home";
 import Lessons from "./pages/website/Lessons";
 import Simulations from "./pages/website/Simulations";
 import Analytics from "./pages/website/Analytics";
+import Ai from "./pages/website/Ai";
 
 import Sidebar from "./pages/admin/components/common/Sidebar";
 import Header from "./pages/admin/components/common/Header";
@@ -28,6 +29,7 @@ import WebsiteLayout from "./pages/website/components/WebsiteLayout";
 import WebsiteLogin from "./pages/website/Login";
 import WebsiteRegister from "./pages/website/Register";
 import Settings from "./pages/website/Settings";
+import LessonQuestionsPage from "./pages/website/LessonQuestionsPage";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -101,6 +103,22 @@ function App() {
           element={
             <WebsiteLayout>
               <Settings />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.AI}
+          element={
+            <WebsiteLayout>
+              <Ai />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.LESSON_QUESTIONS}
+          element={
+            <WebsiteLayout>
+              <LessonQuestionsPage />
             </WebsiteLayout>
           }
         />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Menu, Search, Bell, AtSign, Play, Bookmark,
     Link as LinkIcon, AlertCircle, Paperclip, Lock,
@@ -6,12 +6,33 @@ import {
     MessageSquare,
     ShieldCheck,
     ShieldCheckIcon,
-    Bot
+    Bot,
+    BookOpen
 } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
+import { useLessonCards } from '../../hooks/Web/useLessonCard';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES_WEBSITE } from '../../constants/routes';
+
+const getIcon = (iconName, size = 20) => {
+    if (!iconName) return <BookOpen size={size} />;
+    const name = iconName.toLowerCase();
+    if (name.includes('atsign')) return <AtSign size={size} />;
+    if (name.includes('link')) return <LinkIcon size={size} />;
+    if (name.includes('alert')) return <AlertCircle size={size} />;
+    if (name.includes('paperclip')) return <Paperclip size={size} />;
+    return <BookOpen size={size} />;
+};
 
 const Lessons = ({ setIsMobileMenuOpen }) => {
     const [searchQuery, setSearchQuery] = useState('');
+    const { lessons, activeLessons, loading, fetchActiveLessons } = useLessonCards();
+    const navigate = useNavigate();
+    useEffect(() => {
+        fetchActiveLessons();
+    }, []);
+
+    const activeModule = activeLessons && activeLessons.length > 0 ? activeLessons[0] : null;
 
     return (
         <div className="flex-1 flex flex-col h-full bg-[#0a0f1d] text-white overflow-hidden relative">
@@ -62,114 +83,127 @@ const Lessons = ({ setIsMobileMenuOpen }) => {
                     </div>
 
                     {/* Featured Active Module */}
-                    <Motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#111827] border border-slate-800 rounded-2xl p-6 relative"
-                    >
-                        {/* Background subtle glow */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none" />
-
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="flex items-start gap-4 flex-1 pr-4">
-                                <div className="w-14 h-14 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center flex-shrink-0">
-                                    <AtSign size={28} />
-                                </div>
-                                <div className="flex-1 w-full">
-                                    <h2 className="text-xl font-bold mb-1">Email Basics</h2>
-                                    <p className="text-slate-400 text-sm">Header Analysis • 12 mins • Intermediate</p>
-                                    <div className="mb-6 mt-6">
-                                        <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                                            <span>Overall Progress</span>
-                                            <span className="text-blue-400">60%</span>
-                                        </div>
-                                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                                            <div className="h-full bg-blue-500 w-[60%] rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <button className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 text-sm">
-                                            Resume Lesson <Play size={16} fill="currentColor" />
-                                        </button>
-                                        <button className="p-2.5 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl transition-colors border border-slate-700/50 flex-shrink-0">
-                                            <Bookmark size={20} />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-1.5 px-3 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold tracking-wider rounded-full border border-green-500/20 shrink-0 mt-1">
-                                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                                ACTIVE
-                            </div>
+                    {loading ? (
+                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 h-48 flex items-center justify-center">
+                            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                         </div>
+                    ) : activeModule ? (
+                        <Motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-[#111827] border border-slate-800 rounded-2xl p-6 relative"
+                        >
+                            {/* Background subtle glow */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none" />
 
+                            <div className="flex justify-between items-start mb-6">
+                                <div className="flex items-start gap-4 flex-1 pr-4">
+                                    <div className="w-14 h-14 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                        {getIcon(activeModule.icon, 28)}
+                                    </div>
+                                    <div className="flex-1 w-full">
+                                        <h2 className="text-xl font-bold mb-1">{activeModule.title || 'Active Lesson'}</h2>
+                                        <p className="text-slate-400 text-sm">
+                                            {activeModule.description || `${activeModule.topic || 'Analysis'} • ${activeModule.duration || '12 mins'} • ${activeModule.difficulty || 'Intermediate'}`}
+                                        </p>
+                                        <div className="mb-6 mt-6">
+                                            <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                                <span>Overall Progress</span>
+                                                <span className="text-blue-400">{activeModule.progress || 0}%</span>
+                                            </div>
+                                            <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                                <div className="h-full bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" style={{ width: `${activeModule.progress || 0}%` }} />
+                                            </div>
+                                        </div>
 
-                    </Motion.div>
+                                        <div className="flex items-center gap-3">
+                                            <button onClick={() => navigate(ROUTES_WEBSITE.LESSON_QUESTIONS.replace(':lessonId', activeModule.lessonId))} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 text-sm">
+                                                Resume Lesson <Play size={16} fill="currentColor" />
+                                            </button>
+                                            <button className="p-2.5 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl transition-colors border border-slate-700/50 flex-shrink-0">
+                                                <Bookmark size={20} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-1.5 px-3 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold tracking-wider rounded-full border border-green-500/20 shrink-0 mt-1">
+                                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                                    ACTIVE
+                                </div>
+                            </div>
+                        </Motion.div>
+                    ) : (
+                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
+                            <BookOpen size={48} className="text-slate-600 mb-4" />
+                            <h2 className="text-lg font-bold mb-2">No Active Module</h2>
+                            <p className="text-slate-400 text-sm">You dont have any active modules right now. Start learning from the curriculum below!</p>
+                        </div>
+                    )}
 
                     {/* Other Modules Grid */}
                     <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
-                        {/* Module 1 */}
-                        <Motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col"
-                        >
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="w-10 h-10 bg-slate-800 text-slate-300 rounded-xl flex items-center justify-center">
-                                    <LinkIcon size={20} />
-                                </div>
-                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Not Started</span>
-                            </div>
-                            <h3 className="font-bold mb-1">Advanced URL Spoofing</h3>
-                            <p className="text-xs text-slate-400 mb-6">Homograph Attacks • 18 mins</p>
+                        {loading ? (
+                            <div className="col-span-2 text-center py-8 text-slate-400">Loading modules...</div>
+                        ) : lessons && lessons.length > 0 ? (
+                            lessons.map((lesson, index) => {
+                                const isLocked = lesson.status === 'locked' || lesson.isLocked || lesson.status === 'Locked';
+                                if (isLocked) {
+                                    return (
+                                        <Motion.div
+                                            key={lesson.id || index}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.1 * (index + 1) }}
+                                            className="bg-[#111827]/30 border border-slate-800/30 rounded-2xl p-6 flex flex-col relative overflow-hidden group opacity-60"
+                                        >
+                                            <div className="absolute inset-0 bg-[#0a0f1d]/50 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center">
+                                                <Lock size={24} className="text-slate-500 mb-2" />
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                    {lesson.unlockMessage || 'Locked Module'}
+                                                </span>
+                                            </div>
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div className="w-10 h-10 bg-slate-800/50 text-slate-500 rounded-xl flex items-center justify-center">
+                                                    {getIcon(lesson.icon, 20)}
+                                                </div>
+                                            </div>
+                                            <h3 className="font-bold mb-1 text-slate-400">{lesson.title || 'Locked Module'}</h3>
+                                            <p className="text-xs text-slate-500">{lesson.description || `${lesson.topic || 'Topic'} • ${lesson.duration || '20 mins'}`}</p>
+                                        </Motion.div>
+                                    );
+                                }
 
-                            <button className="mt-auto w-full py-2.5 bg-slate-800/30 hover:bg-slate-800 border border-slate-700/50 text-slate-300 text-sm font-bold rounded-xl transition-all">
-                                Start Module
-                            </button>
-                        </Motion.div>
+                                return (
+                                    <Motion.div
+                                        key={lesson.id || index}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.1 * (index + 1) }}
+                                        className="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col"
+                                    >
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="w-10 h-10 bg-slate-800 text-slate-300 rounded-xl flex items-center justify-center">
+                                                {getIcon(lesson.icon, 20)}
+                                            </div>
+                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-2 pt-1 text-right">
+                                                {lesson.status || 'Not Started'}
+                                            </span>
+                                        </div>
+                                        <h3 className="font-bold mb-1">{lesson.title || 'Untitled Module'}</h3>
+                                        <p className="text-xs text-slate-400 mb-6">{lesson.description || `${lesson.topic || 'Topic'} • ${lesson.duration || '15 mins'}`}</p>
 
-                        {/* Module 2 */}
-                        <Motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col"
-                        >
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="w-10 h-10 bg-slate-800 text-slate-300 rounded-xl flex items-center justify-center">
-                                    <AlertCircle size={20} />
-                                </div>
-                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Not Started</span>
-                            </div>
-                            <h3 className="font-bold mb-1">Psychological Triggers</h3>
-                            <p className="text-xs text-slate-400 mb-6">Authority & Urgency • 15 mins</p>
-
-                            <button className="mt-auto w-full py-2.5 bg-slate-800/30 hover:bg-slate-800 border border-slate-700/50 text-slate-300 text-sm font-bold rounded-xl transition-all">
-                                Start Module
-                            </button>
-                        </Motion.div>
-
-                        {/* Locked Module */}
-                        <Motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="bg-[#111827]/30 border border-slate-800/30 rounded-2xl p-6 flex flex-col relative overflow-hidden group opacity-60"
-                        >
-                            <div className="absolute inset-0 bg-[#0a0f1d]/50 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center">
-                                <Lock size={24} className="text-slate-500 mb-2" />
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Unlock at Level 05</span>
-                            </div>
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="w-10 h-10 bg-slate-800/50 text-slate-500 rounded-xl flex items-center justify-center">
-                                    <Paperclip size={20} />
-                                </div>
-                            </div>
-                            <h3 className="font-bold mb-1 text-slate-400">Attachment Safety</h3>
-                            <p className="text-xs text-slate-500">Macros & Extensions • 20 mins</p>
-                        </Motion.div>
+                                        <button 
+                                            onClick={() => navigate(ROUTES_WEBSITE.LESSON_QUESTIONS.replace(':lessonId', lesson.lessonId))}
+                                            className="mt-auto w-full py-2.5 bg-slate-800/30 hover:bg-slate-800 border border-slate-700/50 text-slate-300 text-sm font-bold rounded-xl transition-all"
+                                        >
+                                            Start Module
+                                        </button>
+                                    </Motion.div>
+                                );
+                            })
+                        ) : (
+                            <div className="col-span-2 text-center py-8 text-slate-400">No modules available found.</div>
+                        )}
                     </div>
                 </div>
 
