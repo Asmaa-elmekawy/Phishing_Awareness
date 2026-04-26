@@ -1,18 +1,17 @@
 import React from 'react';
-import { 
-    Mail, 
-    RefreshCcw, 
-    History, 
-    BookOpen, 
-    BrainCircuit, 
-    Smartphone, 
+import {
+    Mail,
+    History,
+    BookOpen,
+    BrainCircuit,
+    Smartphone,
     Lightbulb,
     Zap,
     ShieldAlert,
     Eye,
-    Hourglass,
     CheckCircle2,
-    Lock
+    Lock,
+    RotateCcw
 } from 'lucide-react';
 
 const Profile = () => {
@@ -40,9 +39,9 @@ const Profile = () => {
             <header className="bg-cyber-surface/40 border border-cyber-border/50 rounded-3xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 backdrop-blur-md">
                 <div className="flex items-center gap-6">
                     <div className="relative w-20 h-20">
-                        <img 
-                            src="https://i.pravatar.cc/150?u=a042581f4e29026704d" 
-                            alt="Mohamed slama" 
+                        <img
+                            src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                            alt="Mohamed slama"
                             className="w-full h-full rounded-full object-cover border-4 border-cyber-primary/30"
                         />
                         <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-red-500 border-2 border-cyber-bg rounded-full"></div>
@@ -61,41 +60,45 @@ const Profile = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-2">
-                    <div className="relative w-20 h-20">
-                        <svg width="80" height="80" className="-rotate-90">
-                            <circle cx="40" cy="40" r="34" strokeWidth="6" className="fill-none stroke-white/5" />
-                            <circle 
-                                cx="40" cy="40" r="34" strokeWidth="6" 
-                                className="fill-none stroke-red-500 transition-[stroke-dashoffset] duration-1000 ease-out"
-                                strokeDasharray={circumference}
-                                strokeDashoffset={offset}
-                                strokeLinecap="round"
-                            />
-                        </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-xl font-extrabold text-cyber-text leading-none">{riskScore}</span>
-                            <span className="text-[10px] text-cyber-text-muted leading-none">/100</span>
+                <div className="flex items-center gap-8 ml-auto">
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="relative w-20 h-20">
+                            <svg width="80" height="80" className="-rotate-90">
+                                <circle cx="40" cy="40" r="34" strokeWidth="6" className="fill-none stroke-white/5" />
+                                <circle
+                                    cx="40" cy="40" r="34" strokeWidth="6"
+                                    className="fill-none stroke-red-500 transition-[stroke-dashoffset] duration-1000 ease-out"
+                                    strokeDasharray={circumference}
+                                    strokeDashoffset={offset}
+                                    strokeLinecap="round"
+                                />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className="text-xl font-extrabold text-cyber-text leading-none">{riskScore}</span>
+                                <span className="text-[10px] text-cyber-text-muted leading-none">/100</span>
+                            </div>
                         </div>
+                        <span className="text-[10px] font-extrabold text-red-500 uppercase tracking-widest">High Risk</span>
                     </div>
-                    <span className="text-[10px] font-extrabold text-red-500 uppercase tracking-widest">High Risk</span>
-                </div>
 
-                <div className="flex flex-col gap-3 w-full md:w-auto">
-                    <button className="flex items-center justify-center gap-2 px-5 py-2.5 bg-cyber-surface/60 border border-cyber-border/50 rounded-xl text-sm font-semibold text-cyber-text hover:bg-cyber-surface-alt/80 transition-all">
-                        <Mail size={16} />
-                        Message User
-                    </button>
-                    <button className="flex items-center justify-center gap-2 px-5 py-2.5 bg-cyber-primary text-white rounded-xl text-sm font-semibold hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all">
-                        <RefreshCcw size={16} />
-                        Re-assign Training
-                    </button>
+                    <div className="w-px h-16 bg-cyber-border/50 hidden md:block"></div>
+
+                    <div className="flex flex-col gap-3 w-full md:w-auto">
+                        <button className="flex items-center justify-center gap-2 px-5 py-2.5 bg-cyber-surface/60 border border-cyber-border/50 rounded-xl text-sm font-semibold text-cyber-text hover:bg-cyber-surface-alt/80 transition-all">
+                            <Mail size={16} />
+                            Message User
+                        </button>
+                        <button className="flex items-center justify-center gap-2 px-5 py-2.5 bg-cyber-primary text-white rounded-xl text-sm font-semibold hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all">
+                            <RotateCcw size={16} />
+                            Re-assign Training
+                        </button>
+                    </div>
                 </div>
             </header>
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                
+
                 {/* Simulation History Column */}
                 <div className="bg-cyber-surface/60 border border-cyber-border/40 rounded-2xl p-6 flex flex-col h-full">
                     <div className="flex items-center justify-between mb-6">
@@ -105,7 +108,7 @@ const Profile = () => {
                         </h2>
                         <span className="text-[10px] text-cyber-text-muted">Last 6 Months</span>
                     </div>
-                    
+
                     <div className="relative pl-6 space-y-8 before:absolute before:left-1 before:top-1.5 before:bottom-1.5 before:w-px before:bg-cyber-border/50">
                         {simulations.map((item) => (
                             <div key={item.id} className="relative">
@@ -135,7 +138,7 @@ const Profile = () => {
                         <BookOpen size={20} className="text-cyber-primary" />
                         Training Progress
                     </h2>
-                    
+
                     <div className="flex justify-between items-center mb-6 text-sm">
                         <span className="text-cyber-text-muted">Current Course Load</span>
                         <span className="text-cyber-primary font-semibold">65% Complete</span>
