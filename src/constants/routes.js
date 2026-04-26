@@ -39,4 +39,5 @@ export const ROUTES_WEBSITE = {
   DASHBOARD: "/dashboard",
   SETTINGS: "/settings",
   AI: "/ai",
+  PROFILE: "/profile",
 };
