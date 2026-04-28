@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
     Lock, ShieldCheck, Monitor, Smartphone, Moon, Mail,
-    LogOut, Award, ChevronRight, Edit2
+    LogOut, Award, ChevronRight, Edit2, Menu
 } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ROUTES_WEBSITE } from '../../constants/routes';
 
-const Settings = () => {
+const Settings = ({ setIsMobileMenuOpen }) => {
     const [darkMode, setDarkMode] = useState(true);
 
     return (
@@ -25,7 +25,15 @@ const Settings = () => {
                         <ChevronRight size={12} />
                         <span className="text-blue-500">Account Settings</span>
                     </div>
-                    <h1 className="text-3xl font-bold mb-2">Account Settings</h1>
+                    <div className="flex items-center gap-3 mb-2">
+                        <button
+                            className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50 shrink-0"
+                            onClick={() => setIsMobileMenuOpen(true)}
+                        >
+                            <Menu size={24} />
+                        </button>
+                        <h1 className="text-3xl font-bold">Account Settings</h1>
+                    </div>
                     <p className="text-slate-400 text-sm">Manage your profile, security, and application preferences.</p>
                 </div>
 

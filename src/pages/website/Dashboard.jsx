@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Bell, Zap, ChevronRight, MessageSquare, Settings } from 'lucide-react';
+import { Shield, Bell, Zap, ChevronRight, MessageSquare, Settings, Menu } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import StatsCards from './components/StatsCards';
 import WeeklyGoalCard from './components/WeeklyGoalCard';
@@ -24,9 +24,9 @@ const Dashboard = ({ setIsMobileMenuOpen }) => {
                         <div className="flex items-center gap-3 mb-2">
                             <button
                                 onClick={() => setIsMobileMenuOpen(true)}
-                                className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-colors"
+                                className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50"
                             >
-                                <Shield size={24} />
+                                <Menu size={24} />
                             </button>
                             <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">
                                 Welcome back, Slama!

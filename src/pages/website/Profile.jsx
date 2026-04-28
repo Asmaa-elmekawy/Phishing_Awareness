@@ -11,10 +11,11 @@ import {
     Eye,
     CheckCircle2,
     Lock,
-    RotateCcw
+    RotateCcw,
+    Menu
 } from 'lucide-react';
 
-const Profile = () => {
+const Profile = ({ setIsMobileMenuOpen }) => {
     const riskScore = 72;
     const circumference = 2 * Math.PI * 34; // r=34
     const offset = circumference - (riskScore / 100) * circumference;
@@ -35,6 +36,16 @@ const Profile = () => {
 
     return (
         <div className="p-8 h-full overflow-y-auto bg-cyber-bg text-cyber-text-muted">
+            {/* Mobile Menu Toggle */}
+            <div className="md:hidden mb-4">
+                <button
+                    className="p-2 -ml-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50 shrink-0"
+                    onClick={() => setIsMobileMenuOpen(true)}
+                >
+                    <Menu size={24} />
+                </button>
+            </div>
+
             {/* Header Section */}
             <header className="bg-cyber-surface/40 border border-cyber-border/50 rounded-3xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 backdrop-blur-md">
                 <div className="flex items-center gap-6">
