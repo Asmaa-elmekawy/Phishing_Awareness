@@ -1,17 +1,13 @@
-// pages/LessonQuestionsPage.jsx
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
     ArrowLeft,
     CheckCircle,
-    XCircle,
     AlertCircle,
-    Trophy,
-    Send,
     Loader,
     ChevronRight,
-    Star,
-    Target
+    Target,
+    RotateCw
 } from "lucide-react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useLessonQuestions } from "../../hooks/Web/useLessonQuestions";
@@ -182,7 +178,7 @@ const LessonQuestionsPage = () => {
                                 onClick={retry}
                                 className="flex-1 py-4 px-6 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                             >
-                                <Star size={16} /> Re-evaluate Module
+                                <RotateCw size={16} /> Re-evaluate Module
                             </button>
                         </div>
                     </Motion.div>

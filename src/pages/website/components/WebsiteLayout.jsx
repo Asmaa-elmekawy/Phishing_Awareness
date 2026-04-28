@@ -41,8 +41,8 @@ const WebsiteLayout = ({ children }) => {
                         <div className="pt-6 pb-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             Account
                         </div>
-                        <NavItem icon={<User size={20} />} label="Profile" to="/profile" />
-                        <NavItem icon={<Settings size={20} />} label="Settings" to="/settings" />
+                        <NavItem icon={<User size={20} />} label="Profile" to={ROUTES_WEBSITE.PROFILE} />
+                        <NavItem icon={<Settings size={20} />} label="Settings" to={ROUTES_WEBSITE.SETTINGS} />
                     </nav>
                 </div>
 

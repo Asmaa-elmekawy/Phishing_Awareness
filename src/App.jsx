@@ -13,6 +13,7 @@ import Lessons from "./pages/website/Lessons";
 import Simulations from "./pages/website/Simulations";
 import Analytics from "./pages/website/Analytics";
 import Ai from "./pages/website/Ai";
+import Profile from "./pages/website/Profile";
 
 import Sidebar from "./pages/admin/components/common/Sidebar";
 import Header from "./pages/admin/components/common/Header";
@@ -111,6 +112,14 @@ function App() {
           element={
             <WebsiteLayout>
               <Ai />
+            </WebsiteLayout>
+          }
+        />
+        <Route
+          path={ROUTES_WEBSITE.PROFILE}
+          element={
+            <WebsiteLayout>
+              <Profile />
             </WebsiteLayout>
           }
         />
