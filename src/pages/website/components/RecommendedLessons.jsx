@@ -33,7 +33,7 @@ const RecommendedLessons = () => {
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-white">Recommended</h2>
-                <button className="text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors uppercase tracking-wider text-[11px]">
+                <button onClick={() => window.location.href = "/lessons"} className="text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors uppercase tracking-wider text-[11px]">
                     See All
                 </button>
             </div>

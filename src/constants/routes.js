@@ -31,6 +31,9 @@ export const ROUTES_WEBSITE = {
   AUTH: {
     LOGIN: "/login",
     REGISTER: "/register",
+    FORGOT_PASSWORD: "/forgot-password",
+    RESET_PASSWORD: "/reset-password",
+    CONFIRM_EMAIL: "/confirm-email",
   },
   ANALYTICS: "/analytics",
   SIMULATIONS: "/simulations",

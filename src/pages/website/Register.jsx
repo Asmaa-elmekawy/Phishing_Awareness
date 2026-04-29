@@ -91,11 +91,11 @@ const Register = () => {
             };
 
             await register(userData);
-            setSuccessMessage('Account created successfully! Redirecting to login...');
+            setSuccessMessage('Account created successfully! Please check your email to confirm your account before logging in.');
 
             setTimeout(() => {
                 navigate(ROUTES_WEBSITE.AUTH.LOGIN);
-            }, 3000);
+            }, 5000);
         } catch (err) {
             console.error('Registration failed:', err);
         }

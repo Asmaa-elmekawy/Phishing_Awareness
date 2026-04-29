@@ -124,9 +124,12 @@ const Login = () => {
                             </button>
                         </div>
                         <div className="flex justify-end">
-                            <button type="button" className="text-sm text-blue-500 hover:text-blue-400 transition-colors">
+                            <Link 
+                                to={ROUTES_WEBSITE.AUTH.FORGOT_PASSWORD} 
+                                className="text-sm text-blue-500 hover:text-blue-400 transition-colors"
+                            >
                                 Forgot Password?
-                            </button>
+                            </Link>
                         </div>
                     </div>
 

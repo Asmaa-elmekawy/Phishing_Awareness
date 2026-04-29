@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import {
     LayoutDashboard, Microscope, BarChart3, Bot,
-    User, Settings, ShieldCheck, BookOpen, Menu
+    User, Settings, ShieldCheck, BookOpen, Menu, LogOut
 } from 'lucide-react';
 import NavItem from './NavItem';
 import { ROUTES_WEBSITE } from '../../../constants/routes';
+import { useAuth } from '../../../hooks/Admin/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const WebsiteLayout = ({ children }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate(ROUTES_WEBSITE.AUTH.LOGIN);
+    };
 
     return (
         <div className="flex h-screen bg-[#0B1120] text-slate-300 font-sans overflow-hidden">
@@ -43,6 +52,14 @@ const WebsiteLayout = ({ children }) => {
                         </div>
                         <NavItem icon={<User size={20} />} label="Profile" to={ROUTES_WEBSITE.PROFILE} />
                         <NavItem icon={<Settings size={20} />} label="Settings" to={ROUTES_WEBSITE.SETTINGS} />
+
+                        <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all mt-4"
+                        >
+                            <LogOut size={20} />
+                            <span>Logout</span>
+                        </button>
                     </nav>
                 </div>
 
