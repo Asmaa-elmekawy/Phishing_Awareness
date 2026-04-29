@@ -4,6 +4,7 @@ import { motion as Motion } from 'framer-motion';
 import { useAuth } from '../../hooks/Admin/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES_ADMIN } from '../../constants/routes';
+import authService from '../../services/AdminServices/authService';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -23,14 +24,18 @@ const Login = () => {
         }
 
         try {
-            const response = await login(email, password);
-
-            console.log('Login successful:', response);
+            await login(email, password);
+            
+            // تحقق من الصلاحية فوراً بعد تسجيل الدخول
+            const role = authService.getUserRole();
+            if (role !== "Admin") {
+                setLocalError("Access Denied: You do not have administrative privileges.");
+                authService.logout(); // مسح التوكن فوراً
+                return;
+            }
 
             navigate(ROUTES_ADMIN.DASHBOARD)
-
         } catch (err) {
-            // الأخطاء بتتعالج تلقائياً في الهوك
             console.error('Login failed:', err);
         }
     };

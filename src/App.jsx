@@ -24,6 +24,7 @@ import ProfilePage from "./pages/admin/ProfilePage";
 import LessonDetailPage from "./pages/admin/LessonDetailPage";
 import QuestionDetailPage from "./pages/admin/QuestionDetailPage";
 import { ROUTES_ADMIN, ROUTES_WEBSITE } from "./constants/routes";
+import authService from "./services/AdminServices/authService";
 import UserSettings from "./pages/admin/UserSettings";
 import Dashboard from "./pages/website/Dashboard";
 import WebsiteLayout from "./pages/website/components/WebsiteLayout";
@@ -35,11 +36,20 @@ import ForgotPassword from "./pages/website/ForgotPassword";
 import ConfirmEmail from "./pages/website/ConfirmEmail";
 import AdminForgotPassword from "./pages/admin/ForgotPassword";
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const token = localStorage.getItem("accessToken");
+  
   if (!token) {
-    return <Navigate to={ROUTES_ADMIN.AUTH.LOGIN} replace />;
+    return <Navigate to={requireAdmin ? ROUTES_ADMIN.AUTH.LOGIN : ROUTES_WEBSITE.AUTH.LOGIN} replace />;
   }
+
+  if (requireAdmin) {
+    const role = authService.getUserRole();
+    if (role !== "Admin") {
+      return <Navigate to={ROUTES_WEBSITE.DASHBOARD} replace />;
+    }
+  }
+
   return children;
 };
 
@@ -145,7 +155,7 @@ function App() {
         <Route
           path={ROUTES_ADMIN.PROFILE.INFO}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}>
               <MainLayout>
                 <ProfilePage />
               </MainLayout>
@@ -157,7 +167,7 @@ function App() {
         <Route
           path={ROUTES_ADMIN.DASHBOARD}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}>
               <MainLayout>
                 <DashboardOverview />
               </MainLayout>
@@ -167,7 +177,7 @@ function App() {
         <Route
           path={ROUTES_ADMIN.LESSONS.LIST}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}>
               <MainLayout>
                 <LessonsPage />
               </MainLayout>
@@ -177,7 +187,7 @@ function App() {
         <Route
           path={ROUTES_ADMIN.LESSONS.DETAILS}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}>
               <MainLayout>
                 <LessonDetailPage />
               </MainLayout>
@@ -187,7 +197,7 @@ function App() {
         <Route
           path={ROUTES_ADMIN.QUESTIONS.LIST}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}>
               <MainLayout>
                 <QuestionsPage />
               </MainLayout>
@@ -197,7 +207,7 @@ function App() {
         <Route
           path={ROUTES_ADMIN.QUESTIONS.DETAILS}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}>
               <MainLayout>
                 <QuestionDetailPage />
               </MainLayout>
@@ -207,7 +217,7 @@ function App() {
         <Route
           path={ROUTES_ADMIN.SETTINGS.USER_SETTINGS}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}>
               <MainLayout>
                 <UserSettings />
               </MainLayout>
