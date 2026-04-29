@@ -131,6 +131,20 @@ const LessonsPage = () => {
     setLocalError("");
 
     try {
+      // التحقق من تكرار رقم الترتيب قبل الإرسال للسيرفر
+      const isDuplicateOrder = lessons.some(
+        (l) =>
+          Number(l.orderNumber) === Number(formData.orderNumber) &&
+          l.lessonId !== editingLesson?.lessonId
+      );
+
+      if (isDuplicateOrder) {
+        setLocalError(
+          "هذا الرقم الترتيبي (Order Number) مستخدم بالفعل في درس آخر. يرجى اختيار رقم مختلف."
+        );
+        return;
+      }
+
       if (editingLesson) {
         const lessonId = editingLesson.lessonId;
 
@@ -164,7 +178,13 @@ const LessonsPage = () => {
       handleCloseModal();
     } catch (err) {
       console.error(" Error saving lesson:", err);
-      setLocalError(err.message || "فشل في حفظ الدرس");
+      // التعامل مع رسائل الخطأ من السيرفر بشكل أوضح
+      const serverMessage = err.message || "";
+      if (serverMessage.includes("orderNumber") || serverMessage.includes("duplicate")) {
+        setLocalError("رقم الترتيب هذا موجود مسبقاً في قاعدة البيانات.");
+      } else {
+        setLocalError(serverMessage || "فشل في حفظ الدرس");
+      }
     }
   };
 

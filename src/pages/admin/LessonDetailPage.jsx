@@ -11,7 +11,7 @@ import { useMeta } from '../../hooks/Admin/useMeta';
 const LessonDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { selectedLesson, fetchLessonById, updateLesson, loading: lessonLoading } = useLessons();
+    const { lessons, selectedLesson, fetchLessonById, updateLesson, loading: lessonLoading } = useLessons();
     const { difficultyLevels, fetchDifficultyLevels, loading: metaLoading } = useMeta();
 
     const [questions, setQuestions] = useState([]);
@@ -68,6 +68,20 @@ const LessonDetailPage = () => {
         setLocalError("");
 
         try {
+            // التحقق من تكرار رقم الترتيب
+            const isDuplicateOrder = lessons?.some(
+                (l) =>
+                    Number(l.orderNumber) === Number(formData.orderNumber) &&
+                    l.lessonId !== selectedLesson.lessonId
+            );
+
+            if (isDuplicateOrder) {
+                setLocalError(
+                    "هذا الرقم الترتيبي (Order Number) مستخدم بالفعل في درس آخر. يرجى اختيار رقم مختلف."
+                );
+                return;
+            }
+
             const updatedData = {
                 title: formData.title,
                 description: formData.description,
@@ -81,7 +95,12 @@ const LessonDetailPage = () => {
             await fetchLessonById(id);
         } catch (err) {
             console.error("Error updating lesson:", err);
-            setLocalError(err.message || "Failed to update lesson");
+            const serverMessage = err.message || "";
+            if (serverMessage.includes("orderNumber") || serverMessage.includes("duplicate")) {
+                setLocalError("رقم الترتيب هذا موجود مسبقاً في قاعدة البيانات.");
+            } else {
+                setLocalError(serverMessage || "Failed to update lesson");
+            }
         }
     };
 
