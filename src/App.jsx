@@ -33,6 +33,7 @@ import Settings from "./pages/website/Settings";
 import LessonQuestionsPage from "./pages/website/LessonQuestionsPage";
 import ForgotPassword from "./pages/website/ForgotPassword";
 import ConfirmEmail from "./pages/website/ConfirmEmail";
+import AdminForgotPassword from "./pages/admin/ForgotPassword";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -139,6 +140,7 @@ function App() {
         <Route path={ROUTES_WEBSITE.AUTH.CONFIRM_EMAIL} element={<ConfirmEmail />} />
         <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
         <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
+        <Route path={ROUTES_ADMIN.AUTH.FORGOT_PASSWORD} element={<AdminForgotPassword />} />
 
         <Route
           path={ROUTES_ADMIN.PROFILE.INFO}
