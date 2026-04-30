@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   },
 });
 
-// إضافة interceptor للتعامل مع التوكن
+//  interceptor للتعامل مع التوكن
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
@@ -24,51 +24,65 @@ axiosInstance.interceptors.request.use(
 );
 
 // Response interceptor للتعامل مع انتهاء صلاحية التوكن
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // التحقق من أن الخطأ هو 401 (Unauthorized) وأن الطلب لم تتم إعادة محاولته بالفعل
-    // نتحقق أيضاً أن الطلب ليس طلب تسجيل دخول أو تجديد توكن لتجنب الحلقات المفرغة
+    // نتحقق إذا كان الطلب هو طلب مصادقة (تسجيل دخول، تجديد، الخ)
+    // نستخدم check شامل لجميع روابط الـ Auth
     const isAuthRequest = originalRequest.url.includes('/Auth');
+
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
       originalRequest._retry = true;
+      console.log("🔄 401 Detected, attempting to refresh token...");
 
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-        if (!refreshToken) {
+        const expiredToken = localStorage.getItem("accessToken");
+
+        if (!refreshToken || !expiredToken) {
+          console.warn("⚠️ Missing tokens for refresh:", { hasAccess: !!expiredToken, hasRefresh: !!refreshToken });
           throw error;
         }
 
-        // استخدام axios مباشر لتجنب الـ interceptors في طلب التجديد
+        console.log("📤 Sending refresh request with:", { 
+          token: expiredToken?.substring(0, 20) + "...", 
+          refreshToken: refreshToken?.substring(0, 10) + "..." 
+        });
+
+        // محاولة تجديد التوكن حسب مواصفات الـ API الخاص بك
         const response = await axios.post(`${BASE_URL}/Auth/refreshToken`, {
-          refreshToken,
+          token: expiredToken,
+          refreshToken: refreshToken
         });
 
         if (response.data.token) {
+          console.log("✅ Token refreshed successfully.");
           const newToken = response.data.token;
           localStorage.setItem("accessToken", newToken);
           
-          // تحديث الـ Refresh Token إذا جاء واحد جديد
           if (response.data.refreshToken) {
             localStorage.setItem("refreshToken", response.data.refreshToken);
           }
 
-          // تحديث الهيدر في الطلب الأصلي وإعادة تنفيذه
+          // تحديث الهيدر وإعادة الطلب الأصلي
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return axiosInstance(originalRequest);
         }
       } catch (refreshError) {
-        // إذا فشل تجديد التوكن، نقوم بتسجيل الخروج
+        console.error("❌ Refresh process failed:", refreshError.response?.data || refreshError.message);
+        
+        // مسح البيانات وتوجيه المستخدم
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         
-        // التوجيه لصفحة تسجيل الدخول حسب المسار الحالي
-        if (window.location.pathname.startsWith('/admin')) {
-          window.location.href = "/admin/login";
-        } else {
-          window.location.href = "/login";
+        if (!window.location.pathname.includes('/login')) {
+          console.log("🚀 Redirecting to login...");
+          window.location.href = window.location.pathname.startsWith('/admin') 
+            ? "/admin/login" 
+            : "/login";
         }
         
         return Promise.reject(refreshError);

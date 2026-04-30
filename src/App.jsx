@@ -8,7 +8,6 @@ import {
 import Login from "./pages/admin/Login";
 import Register from "./pages/admin/Register";
 import DashboardOverview from "./pages/admin/DashboardOverview";
-import Home from "./pages/website/Home";
 import Lessons from "./pages/website/Lessons";
 import Simulations from "./pages/website/Simulations";
 import Analytics from "./pages/website/Analytics";
@@ -33,12 +32,11 @@ import WebsiteRegister from "./pages/website/Register";
 import Settings from "./pages/website/Settings";
 import LessonQuestionsPage from "./pages/website/LessonQuestionsPage";
 import ForgotPassword from "./pages/website/ForgotPassword";
-import ConfirmEmail from "./pages/website/ConfirmEmail";
 import AdminForgotPassword from "./pages/admin/ForgotPassword";
 
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const token = localStorage.getItem("accessToken");
-  
+
   if (!token) {
     return <Navigate to={requireAdmin ? ROUTES_ADMIN.AUTH.LOGIN : ROUTES_WEBSITE.AUTH.LOGIN} replace />;
   }
@@ -147,7 +145,6 @@ function App() {
         <Route path={ROUTES_WEBSITE.AUTH.LOGIN} element={<WebsiteLogin />} />
         <Route path={ROUTES_WEBSITE.AUTH.REGISTER} element={<WebsiteRegister />} />
         <Route path={ROUTES_WEBSITE.AUTH.FORGOT_PASSWORD} element={<ForgotPassword />} />
-        <Route path={ROUTES_WEBSITE.AUTH.CONFIRM_EMAIL} element={<ConfirmEmail />} />
         <Route path={ROUTES_ADMIN.AUTH.LOGIN} element={<Login />} />
         <Route path={ROUTES_ADMIN.AUTH.REGISTER} element={<Register />} />
         <Route path={ROUTES_ADMIN.AUTH.FORGOT_PASSWORD} element={<AdminForgotPassword />} />

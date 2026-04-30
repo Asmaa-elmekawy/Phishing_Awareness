@@ -19,22 +19,22 @@ class AuthService {
     }
   }
 
-  async refreshToken() {
-    try {
-      const refreshToken = localStorage.getItem("refreshToken");
-      const response = await axiosInstance.post("/Auth/refreshToken", {
-        refreshToken,
-      });
+  // async refreshToken() {
+  //   try {
+  //     const refreshToken = localStorage.getItem("refreshToken");
+  //     const response = await axiosInstance.post("/Auth/refreshToken", {
+  //       refreshToken,
+  //     });
 
-      if (response.data.token) {
-        localStorage.setItem("accessToken", response.data.token);
-      }
+  //     if (response.data.token) {
+  //       localStorage.setItem("accessToken", response.data.token);
+  //     }
 
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
+  //     return response.data;
+  //   } catch (error) {
+  //     throw this.handleError(error);
+  //   }
+  // }
 
   async revokeRefreshToken() {
     try {
@@ -61,27 +61,17 @@ class AuthService {
     }
   }
 
-  async confirmEmailPost(token) {
-    try {
-      const response = await axiosInstance.post("/Auth/confirm-email", {
-        token,
-      });
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
+ async confirmEmailPost(userId, code) {
+  try {
+    const response = await axiosInstance.post("/Auth/confirm-email", {
+      UserId: userId,
+      Code: code,
+    });
+    return response.data;
+  } catch (error) {
+    throw this.handleError(error);
   }
-
-  async confirmEmailGet(token) {
-    try {
-      const response = await axiosInstance.get(
-        `/Auth/confirm-email?token=${token}`,
-      );
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
+}
 
   async resendConfirmationEmail(email) {
     try {
