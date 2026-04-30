@@ -30,29 +30,26 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // نتحقق إذا كان الطلب هو طلب مصادقة (تسجيل دخول، تجديد، الخ)
-    // نستخدم check شامل لجميع روابط الـ Auth
     const isAuthRequest = originalRequest.url.includes('/Auth');
 
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
       originalRequest._retry = true;
-      console.log("🔄 401 Detected, attempting to refresh token...");
+      console.log(" 401 Detected, attempting to refresh token...");
 
       try {
         const refreshToken = localStorage.getItem("refreshToken");
         const expiredToken = localStorage.getItem("accessToken");
 
         if (!refreshToken || !expiredToken) {
-          console.warn("⚠️ Missing tokens for refresh:", { hasAccess: !!expiredToken, hasRefresh: !!refreshToken });
+          console.warn(" Missing tokens for refresh:", { hasAccess: !!expiredToken, hasRefresh: !!refreshToken });
           throw error;
         }
 
-        console.log("📤 Sending refresh request with:", { 
+        console.log(" Sending refresh request with:", { 
           token: expiredToken?.substring(0, 20) + "...", 
           refreshToken: refreshToken?.substring(0, 10) + "..." 
         });
 
-        // محاولة تجديد التوكن حسب مواصفات الـ API الخاص بك
         const response = await axios.post(`${BASE_URL}/Auth/refreshToken`, {
           token: expiredToken,
           refreshToken: refreshToken
@@ -72,14 +69,14 @@ axiosInstance.interceptors.response.use(
           return axiosInstance(originalRequest);
         }
       } catch (refreshError) {
-        console.error("❌ Refresh process failed:", refreshError.response?.data || refreshError.message);
+        console.error(" Refresh process failed:", refreshError.response?.data || refreshError.message);
         
         // مسح البيانات وتوجيه المستخدم
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         
         if (!window.location.pathname.includes('/login')) {
-          console.log("🚀 Redirecting to login...");
+          console.log(" Redirecting to login...");
           window.location.href = window.location.pathname.startsWith('/admin') 
             ? "/admin/login" 
             : "/login";

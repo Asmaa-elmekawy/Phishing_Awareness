@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-    Send, Plus, Smile, ShieldCheck, User, 
+import {
+    Send, Plus, Smile, ShieldCheck, User,
     Search, Link as LinkIcon, History, Bot,
     Menu
 } from 'lucide-react';
+import { sendChatMessage } from '../../services/WebServices/chatService';
 
 const Ai = ({ setIsMobileMenuOpen }) => {
     const [messages, setMessages] = useState([
@@ -36,6 +37,7 @@ const Ai = ({ setIsMobileMenuOpen }) => {
     ]);
 
     const [input, setInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef(null);
 
     useEffect(() => {
@@ -44,31 +46,65 @@ const Ai = ({ setIsMobileMenuOpen }) => {
         }
     }, [messages]);
 
-    const handleSend = () => {
-        if (!input.trim()) return;
-        
-        const newMessage = {
+    const handleSend = async (customText = null) => {
+        const textToSend = customText || input;
+        if (!textToSend.trim() || isLoading) return;
+
+        const userMsg = {
             id: Date.now(),
             role: 'user',
             type: 'text',
-            text: input,
+            text: textToSend,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
-        
-        setMessages([...messages, newMessage]);
-        setInput('');
 
-        // Simulate AI response
-        setTimeout(() => {
+        setMessages(prev => [...prev, userMsg]);
+        if (!customText) setInput('');
+        setIsLoading(true);
+
+        try {
+            // تحضير تاريخ المحادثة للإرسال
+            const history = messages.concat(userMsg).map(msg => ({
+                role: msg.role === 'ai' ? 'assistant' : 'user',
+                content: msg.text || msg.description || ''
+            }));
+
+            const response = await sendChatMessage(history);
+
+            // استخراج النص من الرد (حسب شكل الـ API)
+            const aiText = response.response || "I'm sorry, I couldn't process that.";
+
             const aiResponse = {
                 id: Date.now() + 1,
                 role: 'ai',
                 type: 'text',
-                text: "To protect yourself, always hover over a link to see the actual URL. Check for misspellings (like 'facebo0k'), and ensure the site uses HTTPS. Would you like me to check a specific link for you?",
+                text: aiText,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
+
             setMessages(prev => [...prev, aiResponse]);
-        }, 1000);
+        } catch (error) {
+            console.error(error);
+
+            let errorText = "حصل مشكلة في الاتصال";
+
+            if (error?.response?.status === 429) {
+                errorText = "الـ AI مشغول دلوقتي  جربي كمان شوية";
+            }
+
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: Date.now(),
+                    role: 'ai',
+                    type: 'text',
+                    text: errorText,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }
+            ]);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -76,7 +112,7 @@ const Ai = ({ setIsMobileMenuOpen }) => {
             {/* Header */}
             <header className="p-4 border-b border-slate-800/60 flex items-center justify-between bg-[#0B1120]/80 backdrop-blur-md sticky top-0 z-10">
                 <div className="flex items-center gap-3">
-                    <button 
+                    <button
                         onClick={() => setIsMobileMenuOpen(true)}
                         className="p-2 -ml-2 text-slate-400 hover:text-white md:hidden"
                     >
@@ -104,7 +140,7 @@ const Ai = ({ setIsMobileMenuOpen }) => {
             </header>
 
             {/* Chat Area */}
-            <div 
+            <div
                 ref={scrollRef}
                 className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
             >
@@ -117,24 +153,22 @@ const Ai = ({ setIsMobileMenuOpen }) => {
                         <div className={`flex gap-3 max-w-[85%] md:max-w-[70%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                             {/* Avatar */}
                             <div className="flex-shrink-0 mt-1">
-                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
-                                    msg.role === 'user' 
-                                        ? 'bg-orange-500/10 border-orange-500/20 text-orange-400' 
-                                        : 'bg-blue-500/10 border-blue-500/20 text-blue-400'
-                                }`}>
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${msg.role === 'user'
+                                    ? 'bg-orange-500/10 border-orange-500/20 text-orange-400'
+                                    : 'bg-blue-500/10 border-blue-500/20 text-blue-400'
+                                    }`}>
                                     {msg.role === 'user' ? <User size={16} /> : <ShieldCheck size={16} />}
                                 </div>
                             </div>
 
                             {/* Message Content */}
                             <div className="space-y-1">
-                                <div className={`p-4 rounded-2xl border transition-all ${
-                                    msg.role === 'user' 
-                                        ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.2)]' 
-                                        : 'bg-slate-800/40 border-slate-700/50 text-slate-200'
-                                }`}>
+                                <div className={`p-4 rounded-2xl border transition-all ${msg.role === 'user'
+                                    ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.2)]'
+                                    : 'bg-slate-800/40 border-slate-700/50 text-slate-200'
+                                    }`}>
                                     {msg.type === 'text' && <p className="text-sm md:text-base leading-relaxed">{msg.text}</p>}
-                                    
+
                                     {msg.type === 'concept' && (
                                         <div className="space-y-3">
                                             <h3 className="text-blue-400 font-bold text-base md:text-lg">{msg.title}</h3>
@@ -167,6 +201,24 @@ const Ai = ({ setIsMobileMenuOpen }) => {
                         </div>
                     </div>
                 ))}
+
+                {/* Typing Indicator */}
+                {isLoading && (
+                    <div className="flex justify-start animate-fade-in-up">
+                        <div className="flex gap-3 max-w-[85%] md:max-w-[70%]">
+                            <div className="flex-shrink-0 mt-1">
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center border bg-blue-500/10 border-blue-500/20 text-blue-400">
+                                    <ShieldCheck size={16} />
+                                </div>
+                            </div>
+                            <div className="bg-slate-800/40 border border-slate-700/50 p-4 rounded-2xl flex gap-1.5 items-center">
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Input Area */}
@@ -179,9 +231,11 @@ const Ai = ({ setIsMobileMenuOpen }) => {
                             { icon: <LinkIcon size={14} />, label: "Check link" },
                             { icon: <History size={14} />, label: "Recent trends" }
                         ].map((action, i) => (
-                            <button 
+                            <button
                                 key={i}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/40 border border-slate-700/50 text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-700/60 hover:border-slate-600 transition-all active:scale-95"
+                                onClick={() => handleSend(action.label)}
+                                disabled={isLoading}
+                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/40 border border-slate-700/50 text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-700/60 hover:border-slate-600 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {action.icon}
                                 {action.label}
@@ -196,8 +250,8 @@ const Ai = ({ setIsMobileMenuOpen }) => {
                             <button className="p-3 text-slate-400 hover:text-white hover:bg-slate-700/40 rounded-xl transition-colors">
                                 <Plus size={20} />
                             </button>
-                            <input 
-                                type="text" 
+                            <input
+                                type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
@@ -207,14 +261,13 @@ const Ai = ({ setIsMobileMenuOpen }) => {
                             <button className="p-3 text-slate-400 hover:text-white hover:bg-slate-700/40 rounded-xl transition-colors">
                                 <Smile size={20} />
                             </button>
-                            <button 
-                                onClick={handleSend}
-                                disabled={!input.trim()}
-                                className={`p-3 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] ${
-                                    input.trim() 
-                                        ? 'bg-blue-600 text-white hover:bg-blue-500 active:scale-95' 
-                                        : 'bg-slate-700/50 text-slate-500 cursor-not-allowed shadow-none'
-                                }`}
+                            <button
+                                onClick={() => handleSend()}
+                                disabled={!input.trim() || isLoading}
+                                className={`p-3 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] ${input.trim() && !isLoading
+                                    ? 'bg-blue-600 text-white hover:bg-blue-500 active:scale-95'
+                                    : 'bg-slate-700/50 text-slate-500 cursor-not-allowed shadow-none'
+                                    }`}
                             >
                                 <Send size={20} />
                             </button>
