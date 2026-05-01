@@ -74,6 +74,10 @@ const MainLayout = ({ children }) => {
 };
 
 function App() {
+  React.useEffect(() => {
+    authService.initAuth();
+  }, []);
+
   return (
     <Router>
       <Routes>

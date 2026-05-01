@@ -1,5 +1,10 @@
+import axios from "axios";
 import axiosInstance from "./axiosConfig";
 
+const BASE_URL = "https://phish-escape.runasp.net";
+
+
+let refreshTimer = null;
 class AuthService {
   async login(email, password) {
     try {
@@ -9,8 +14,7 @@ class AuthService {
       });
 
       if (response.data.token) {
-        localStorage.setItem("accessToken", response.data.token);
-        localStorage.setItem("refreshToken", response.data.refreshToken);
+        this.setSession(response.data);
       }
 
       return response.data;
@@ -19,22 +23,66 @@ class AuthService {
     }
   }
 
-  // async refreshToken() {
-  //   try {
-  //     const refreshToken = localStorage.getItem("refreshToken");
-  //     const response = await axiosInstance.post("/Auth/refreshToken", {
-  //       refreshToken,
-  //     });
+  setSession(authData) {
+    localStorage.setItem("accessToken", authData.token);
+    localStorage.setItem("refreshToken", authData.refreshToken);
+    
+    if (authData.expiresIn) {
+      const expiresAt = Date.now() + authData.expiresIn * 1000;
+      localStorage.setItem("tokenExpires", expiresAt.toString());
+      this.startSilentRefresh(authData.expiresIn);
+    }
+  }
 
-  //     if (response.data.token) {
-  //       localStorage.setItem("accessToken", response.data.token);
-  //     }
+  startSilentRefresh(expiresInSeconds) {
+    if (refreshTimer) clearTimeout(refreshTimer);
 
-  //     return response.data;
-  //   } catch (error) {
-  //     throw this.handleError(error);
-  //   }
-  // }
+    // تجديد قبل النهاية بـ 5 دقائق (أو فوراً إذا كان الوقت المتبقي أقل من ذلك)
+    const refreshThreshold = 300; // 5 minutes
+    const delay = Math.max(0, (expiresInSeconds - refreshThreshold) * 1000);
+
+    console.log(`🕒 Silent refresh scheduled in ${Math.round(delay / 60000)} minutes`);
+
+    refreshTimer = setTimeout(async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
+
+        if (!token || !refreshToken) return;
+
+        console.log("🔄 Starting silent refresh...");
+        
+        // استخدام axios مباشرة لتجنب التداخل مع interceptors
+        const response = await axios.post(`${BASE_URL}/Auth/refreshToken`, {
+          token,
+          refreshToken,
+        });
+
+        console.log("✅ Silent refresh success");
+        this.setSession(response.data);
+
+      } catch (err) {
+        console.error("❌ Silent refresh failed", err.response?.data || err.message);
+        // لا نقوم بتسجيل الخروج هنا، نترك الـ interceptor يتعامل مع الـ 401 إذا حدث
+      }
+    }, delay);
+  }
+
+  initAuth() {
+    const token = localStorage.getItem("accessToken");
+    const expiresAt = localStorage.getItem("tokenExpires");
+
+    if (token && expiresAt) {
+      const remainingSeconds = Math.floor((parseInt(expiresAt) - Date.now()) / 1000);
+      
+      if (remainingSeconds > 60) { // لو فاضل أكتر من دقيقة، شغل الـ timer
+        this.startSilentRefresh(remainingSeconds);
+      } else if (remainingSeconds > -600) { // لو منتهي من فترة قصيرة، حاول تجدده فوراً
+        this.startSilentRefresh(0);
+      }
+    }
+  }
+
 
   async revokeRefreshToken() {
     try {
@@ -152,6 +200,11 @@ class AuthService {
   logout() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("tokenExpires");
+    if (refreshTimer) {
+      clearTimeout(refreshTimer);
+      refreshTimer = null;
+    }
   }
 
   // فك تشفير التوكن للحصول على البيانات للتاكد من role admin or not

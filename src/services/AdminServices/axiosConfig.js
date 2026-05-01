@@ -64,6 +64,11 @@ axiosInstance.interceptors.response.use(
             localStorage.setItem("refreshToken", response.data.refreshToken);
           }
 
+          if (response.data.expiresIn) {
+            const expiresAt = Date.now() + response.data.expiresIn * 1000;
+            localStorage.setItem("tokenExpires", expiresAt.toString());
+          }
+
           // تحديث الهيدر وإعادة الطلب الأصلي
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return axiosInstance(originalRequest);
