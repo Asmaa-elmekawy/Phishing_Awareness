@@ -5,6 +5,7 @@ import {
     Menu
 } from 'lucide-react';
 import { sendChatMessage } from '../../services/WebServices/chatService';
+import authService from '../../services/AdminServices/authService';
 
 const Ai = ({ setIsMobileMenuOpen }) => {
     const [messages, setMessages] = useState([
@@ -39,6 +40,7 @@ const Ai = ({ setIsMobileMenuOpen }) => {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef(null);
+    const [isStarted, setIsStarted] = useState(false);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -50,6 +52,7 @@ const Ai = ({ setIsMobileMenuOpen }) => {
         const textToSend = customText || input;
         if (!textToSend.trim() || isLoading) return;
 
+        // Create user message object
         const userMsg = {
             id: Date.now(),
             role: 'user',
@@ -58,21 +61,43 @@ const Ai = ({ setIsMobileMenuOpen }) => {
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
 
+        // Update state immediately
         setMessages(prev => [...prev, userMsg]);
-        if (!customText) setInput('');
+        setInput('');
         setIsLoading(true);
 
         try {
-            // تحضير تاريخ المحادثة للإرسال
-            const history = messages.concat(userMsg).map(msg => ({
-                role: msg.role === 'ai' ? 'assistant' : 'user',
-                content: msg.text || msg.description || ''
-            }));
+            // Get current user ID or use fallback
+            const userId = authService.getUserId() || "guest_user";
 
-            const response = await sendChatMessage(history);
+            // Initialize training if not started
+            if (!isStarted) {
+                try {
+                    await sendChatMessage({
+                        user_id: userId,
+                        message: "/train"
+                    });
+                    setIsStarted(true);
+                } catch (trainError) {
+                    console.warn("Training failed, continuing anyway:", trainError);
+                }
+            }
 
-            // استخراج النص من الرد (حسب شكل الـ API)
-            const aiText = response.response || "I'm sorry, I couldn't process that.";
+            // Send actual message
+            const response = await sendChatMessage({
+                user_id: userId,
+                message: textToSend
+            });
+
+            console.log("Webhook response:", response);
+
+            const aiText =
+                response?.reply ||
+                response?.message ||
+                response?.response ||
+                response?.answer ||
+                response?.text ||
+                "I'm sorry, I couldn't process that response.";
 
             const aiResponse = {
                 id: Date.now() + 1,
@@ -83,25 +108,19 @@ const Ai = ({ setIsMobileMenuOpen }) => {
             };
 
             setMessages(prev => [...prev, aiResponse]);
+
         } catch (error) {
-            console.error(error);
-
-            let errorText = "حصل مشكلة في الاتصال";
-
-            if (error?.response?.status === 429) {
-                errorText = "الـ AI مشغول دلوقتي  جربي كمان شوية";
-            }
-
-            setMessages(prev => [
-                ...prev,
-                {
-                    id: Date.now(),
-                    role: 'ai',
-                    type: 'text',
-                    text: errorText,
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                }
-            ]);
+            console.error("Chat Error:", error);
+            
+            // Add error message to chat
+            const errorMsg = {
+                id: Date.now() + 2,
+                role: 'ai',
+                type: 'text',
+                text: "I'm having trouble connecting to my brain right now. Please check your connection or try again later.",
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setMessages(prev => [...prev, errorMsg]);
         } finally {
             setIsLoading(false);
         }

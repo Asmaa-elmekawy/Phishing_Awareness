@@ -233,6 +233,19 @@ class AuthService {
            decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
            (Array.isArray(decoded.roles) ? decoded.roles[0] : decoded.roles);
   }
+
+  getUserId() {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return null;
+    
+    const decoded = this.decodeToken(token);
+    if (!decoded) return null;
+
+    return decoded.id || 
+           decoded.nameid || 
+           decoded["http://schemas.microsoft.com/ws/2005/05/identity/claims/nameidentifier"] ||
+           decoded.sub;
+  }
 }
 
 export default new AuthService();
