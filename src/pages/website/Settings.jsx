@@ -8,7 +8,19 @@ import { Link } from 'react-router-dom';
 import { ROUTES_WEBSITE } from '../../constants/routes';
 
 const Settings = ({ setIsMobileMenuOpen }) => {
-    const [darkMode, setDarkMode] = useState(true);
+    const [darkMode, setDarkMode] = useState(() => {
+        return localStorage.getItem('theme') !== 'light';
+    });
+
+    React.useEffect(() => {
+        if (darkMode) {
+            document.documentElement.classList.remove('light-mode');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
+        }
+    }, [darkMode]);
 
     return (
         <div className="h-full overflow-y-auto bg-[#0a0f1d] text-white p-4 md:p-8">
