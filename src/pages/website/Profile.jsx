@@ -75,7 +75,7 @@ const Profile = ({ setIsMobileMenuOpen }) => {
                     <div className="flex flex-col items-center gap-2">
                         <div className="relative w-20 h-20">
                             <svg width="80" height="80" className="-rotate-90">
-                                <circle cx="40" cy="40" r="34" strokeWidth="6" className="fill-none stroke-white/5" />
+                                <circle cx="40" cy="40" r="34" strokeWidth="6" className="fill-none stroke-cyber-border/50" />
                                 <circle
                                     cx="40" cy="40" r="34" strokeWidth="6"
                                     className="fill-none stroke-red-500 transition-[stroke-dashoffset] duration-1000 ease-out"

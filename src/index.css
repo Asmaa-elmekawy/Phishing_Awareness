@@ -54,3 +54,145 @@
     animation: fade-in-up 0.3s ease-out forwards;
   }
 }
+
+/* Light Mode Overrides */
+html.light-mode {
+  --color-cyber-bg: #f8fafc;
+  --color-cyber-surface: #ffffff;
+  --color-cyber-surface-alt: #f1f5f9;
+  --color-cyber-text: #0f172a;
+  --color-cyber-text-muted: #475569;
+  --color-cyber-border: #e2e8f0;
+}
+
+html.light-mode body {
+  background-color: var(--color-cyber-bg) !important;
+  color: var(--color-cyber-text) !important;
+}
+
+/* General Layout Backgrounds */
+html.light-mode .bg-\[\#0B1120\],
+html.light-mode .bg-\[\#0B1120\]\/80,
+html.light-mode .bg-\[\#0a0f1d\],
+html.light-mode .bg-\[\#0f172a\] {
+  background-color: #f8fafc !important;
+}
+
+/* Card Backgrounds */
+html.light-mode .bg-\[\#111827\],
+html.light-mode .bg-\[\#111827\]\/60,
+html.light-mode .bg-\[\#1e293b\],
+html.light-mode .bg-\[\#0F1523\],
+html.light-mode .bg-\[\#151D2C\] {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Inner Card Backgrounds */
+html.light-mode .bg-\[\#151b2d\],
+html.light-mode .bg-\[\#1c2436\] {
+  background-color: #f1f5f9 !important; /* slate-100 */
+}
+
+html.light-mode .bg-slate-800,
+html.light-mode .bg-slate-700,
+html.light-mode .bg-slate-800\/50,
+html.light-mode .bg-slate-800\/30,
+html.light-mode .bg-slate-800\/20,
+html.light-mode .hover\:bg-slate-800\/50:hover,
+html.light-mode .hover\:bg-\[\#252d42\]:hover {
+  background-color: #e2e8f0 !important; /* slate-200 */
+}
+
+/* Borders */
+html.light-mode .border-slate-800\/60,
+html.light-mode .border-slate-800\/80,
+html.light-mode .border-slate-800,
+html.light-mode .border-slate-700\/40,
+html.light-mode .border-slate-700\/50,
+html.light-mode .border-slate-700\/60,
+html.light-mode .border-slate-700 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Text Colors */
+html.light-mode .text-white,
+html.light-mode .text-slate-200 {
+  color: #0f172a !important;
+}
+html.light-mode .text-slate-300 {
+  color: #334155 !important;
+}
+html.light-mode .text-slate-400 {
+  color: #475569 !important;
+}
+html.light-mode .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Keep primary buttons blue with white text */
+html.light-mode .bg-blue-500,
+html.light-mode .bg-blue-600 {
+  color: #ffffff !important;
+}
+
+/* Exceptions: elements inside specific wrappers that should keep their text color */
+html.light-mode .bg-blue-500 .text-white,
+html.light-mode .bg-blue-600 .text-white,
+html.light-mode .from-blue-500 .text-white,
+html.light-mode .from-blue-500 .text-blue-100 {
+  color: inherit !important;
+}
+
+html.light-mode .text-blue-100,
+html.light-mode .text-blue-200\/70 {
+  color: #1e3a8a !important; /* blue-900 */
+}
+
+html.light-mode .bg-blue-900\/20 {
+  background-color: #eff6ff !important; /* blue-50 */
+}
+
+html.light-mode .bg-gradient-to-br.from-blue-500 {
+  color: #ffffff !important;
+}
+
+/* Overrides for Lessons and Simulations pages */
+html.light-mode .bg-\[\#0a0f1d\]\/50,
+html.light-mode .bg-\[\#0B1120\]\/50 {
+  background-color: #f8fafc !important;
+}
+
+html.light-mode .bg-\[\#111827\]\/30 {
+  background-color: #f8fafc !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05) !important;
+}
+
+html.light-mode .bg-slate-800\/40 {
+  background-color: #e2e8f0 !important;
+}
+
+html.light-mode .border-slate-800\/30 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Impact Box overrides for Simulations.jsx */
+html.light-mode .bg-orange-950\/30 { background-color: #fff7ed !important; }
+html.light-mode .text-orange-200 { color: #9a3412 !important; }
+
+html.light-mode .bg-yellow-950\/30 { background-color: #fefce8 !important; }
+html.light-mode .text-yellow-200 { color: #854d0e !important; }
+
+html.light-mode .bg-red-950\/30 { background-color: #fef2f2 !important; }
+html.light-mode .text-red-200 { color: #991b1b !important; }
+
+/* Remove bottom fade shadows in light mode for Settings and Ai pages */
+html.light-mode .from-\[\#0a0f1d\],
+html.light-mode .from-\[\#0B1120\] {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+html.light-mode .shadow-2xl {
+  box-shadow: none !important;
+}
