@@ -52,13 +52,13 @@ const Profile = ({ setIsMobileMenuOpen }) => {
                     <div className="relative w-20 h-20">
                         <img
                             src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                            alt="Mohamed slama"
+                            alt="Mohamed salama"
                             className="w-full h-full rounded-full object-cover border-4 border-cyber-primary/30"
                         />
                         <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-red-500 border-2 border-cyber-bg rounded-full"></div>
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-cyber-text mb-1">Mohamed slama's Profile</h1>
+                        <h1 className="text-2xl font-bold text-cyber-text mb-1">Mohamed salama's Profile</h1>
                         <div className="flex items-center gap-2 text-sm">
                             <span className="bg-cyber-primary/10 text-cyber-primary px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider">Sales Department</span>
                             <span className="text-cyber-text-muted/60">•</span>
