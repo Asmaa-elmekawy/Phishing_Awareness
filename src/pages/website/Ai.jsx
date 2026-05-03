@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
     Send, Plus, Smile, ShieldCheck, User,
     Search, Link as LinkIcon, History, Bot,
-    Menu
+    Menu, GraduationCap, Dumbbell
 } from 'lucide-react';
 import { sendChatMessage } from '../../services/WebServices/chatService';
 import authService from '../../services/AdminServices/authService';
 
 const Ai = ({ setIsMobileMenuOpen }) => {
-    const [messages, setMessages] = useState([
+    const initialMessages = [
         {
             id: 1,
             role: 'ai',
@@ -35,12 +35,51 @@ const Ai = ({ setIsMobileMenuOpen }) => {
             text: "That's scary. How can I protect myself from these fake links?",
             timestamp: '10:44 AM'
         }
-    ]);
+    ];
+
+    const userId = authService.getUserId() || "guest_user";
+    const messagesKey = `chat_messages_${userId}`;
+    const convIdKey = `chat_conversationId_${userId}`;
+
+    const [messages, setMessages] = useState(() => {
+        const saved = localStorage.getItem(messagesKey);
+        return saved ? JSON.parse(saved) : initialMessages;
+    });
 
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef(null);
-    const [isStarted, setIsStarted] = useState(false);
+    const [conversationId, setConversationId] = useState(() => {
+        return localStorage.getItem(convIdKey) || null;
+    });
+
+    // Effect to reload chat when user changes
+    useEffect(() => {
+        const savedMessages = localStorage.getItem(messagesKey);
+        const savedConvId = localStorage.getItem(convIdKey);
+
+        setMessages(savedMessages ? JSON.parse(savedMessages) : initialMessages);
+        setConversationId(savedConvId || null);
+    }, [userId]);
+
+    useEffect(() => {
+        localStorage.setItem(messagesKey, JSON.stringify(messages));
+    }, [messages, messagesKey]);
+
+    useEffect(() => {
+        if (conversationId) {
+            localStorage.setItem(convIdKey, conversationId);
+        } else {
+            localStorage.removeItem(convIdKey);
+        }
+    }, [conversationId, convIdKey]);
+
+    const handleNewChat = () => {
+        setMessages(initialMessages);
+        setConversationId(null);
+        localStorage.removeItem(messagesKey);
+        localStorage.removeItem(convIdKey);
+    };
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -67,29 +106,19 @@ const Ai = ({ setIsMobileMenuOpen }) => {
         setIsLoading(true);
 
         try {
-            // Get current user ID or use fallback
-            const userId = authService.getUserId() || "guest_user";
-
-            // Initialize training if not started
-            if (!isStarted) {
-                try {
-                    await sendChatMessage({
-                        user_id: userId,
-                        message: "/train"
-                    });
-                    setIsStarted(true);
-                } catch (trainError) {
-                    console.warn("Training failed, continuing anyway:", trainError);
-                }
-            }
-
             // Send actual message
             const response = await sendChatMessage({
-                user_id: userId,
-                message: textToSend
+                userId: userId,
+                message: textToSend,
+                conversationId: conversationId
             });
 
-            console.log("Webhook response:", response);
+            console.log("AI response:", response);
+
+            // Update conversationId if provided in response
+            if (response?.conversationId) {
+                setConversationId(response.conversationId);
+            }
 
             const aiText =
                 response?.reply ||
@@ -111,7 +140,7 @@ const Ai = ({ setIsMobileMenuOpen }) => {
 
         } catch (error) {
             console.error("Chat Error:", error);
-            
+
             // Add error message to chat
             const errorMsg = {
                 id: Date.now() + 2,
@@ -149,8 +178,12 @@ const Ai = ({ setIsMobileMenuOpen }) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors">
-                        <Search size={18} />
+                    <button
+                        onClick={handleNewChat}
+                        className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-blue-400 hover:text-white hover:bg-blue-500/10 rounded-lg border border-blue-500/20 transition-all"
+                    >
+                        <Plus size={16} />
+                        New Chat
                     </button>
                     <button className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors">
                         <History size={18} />
@@ -246,15 +279,20 @@ const Ai = ({ setIsMobileMenuOpen }) => {
                     {/* Quick Actions */}
                     <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                         {[
-                            { icon: <Search size={14} />, label: "Explain URL Spoofing" },
-                            { icon: <LinkIcon size={14} />, label: "Check link" },
-                            { icon: <History size={14} />, label: "Recent trends" }
+                            { icon: <Search size={14} />, label: "Explain URL Spoofing", value: "Explain URL Spoofing" },
+                            { icon: <LinkIcon size={14} />, label: "Check link", value: "Check link" },
+                            { icon: <History size={14} />, label: "Recent trends", value: "Recent trends" },
+                            { icon: <GraduationCap size={14} />, label: "Start Training Session", value: "/train", special: true },
                         ].map((action, i) => (
                             <button
                                 key={i}
-                                onClick={() => handleSend(action.label)}
+                                onClick={() => handleSend(action.value)}
                                 disabled={isLoading}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/40 border border-slate-700/50 text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-700/60 hover:border-slate-600 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium ${
+                                    action.special 
+                                    ? 'bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 hover:border-blue-500/50' 
+                                    : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700/60 hover:border-slate-600'
+                                }`}
                             >
                                 {action.icon}
                                 {action.label}

@@ -1,16 +1,10 @@
-import axios from "axios";
+import axiosInstance from "../AdminServices/axiosConfig";
 
-const api = axios.create({
-  baseURL: "https://amer003100-securitychatbot.hf.space",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-export const sendChatMessage = async ({ user_id, message }) => {
-  const res = await api.post("/webhook", {
-    user_id,
+export const sendChatMessage = async ({ userId, message, conversationId = null }) => {
+  const res = await axiosInstance.post("/api/chat/send", {
+    userId,
     message,
+    conversationId
   });
 
   return res.data;
