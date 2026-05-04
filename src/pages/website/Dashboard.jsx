@@ -7,14 +7,17 @@ import PhishOfTheDay from './components/PhishOfTheDay';
 import RecommendedLessons from './components/RecommendedLessons';
 import ActiveCurriculum from './components/ActiveCurriculum';
 import PhishLogo from '../../assets/phishing_of_the_day.png';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES_WEBSITE } from '../../constants/routes';
 
-const Dashboard = ({ setIsMobileMenuOpen }) => {
+const Dashboard = ({ setIsMobileMenuOpen, userData }) => {
+    const navigate = useNavigate();
     return (
         <div className="min-h-screen bg-[#0B1120] text-slate-300 p-6 lg:p-10 space-y-10 overflow-y-auto w-full custom-scrollbar">
             <div className="max-w-[1400px] mx-auto space-y-10">
-
+                
                 {/* Header Section */}
-                <Motion.header 
+                <Motion.header
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
@@ -29,7 +32,7 @@ const Dashboard = ({ setIsMobileMenuOpen }) => {
                                 <Menu size={24} />
                             </button>
                             <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-                                Welcome back, Slama!
+                                Welcome back, {userData?.firstName || 'User'}!
                             </h1>
                         </div>
                         <p className="text-slate-400 text-sm md:text-base font-medium">
@@ -53,7 +56,7 @@ const Dashboard = ({ setIsMobileMenuOpen }) => {
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 items-start">
 
                     {/* Left Column (Main Content) */}
-                    <Motion.div 
+                    <Motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
@@ -65,7 +68,7 @@ const Dashboard = ({ setIsMobileMenuOpen }) => {
                     </Motion.div>
 
                     {/* Right Column (Sidebar Content) */}
-                    <Motion.div 
+                    <Motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
@@ -93,7 +96,7 @@ const Dashboard = ({ setIsMobileMenuOpen }) => {
                                         "Hello! Need help analyzing a specific link or suspicious email? I'm here to assist."
                                     </p>
                                     <div className="flex gap-3 w-full">
-                                        <button className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-2xl transition-all border border-white/10 backdrop-blur-sm">
+                                        <button onClick={() => navigate(ROUTES_WEBSITE.AI)} className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-2xl transition-all border border-white/10 backdrop-blur-sm">
                                             Chat Now
                                         </button>
                                         <button className="p-3.5 bg-white/5 hover:bg-white/10 text-white rounded-2xl transition-all border border-white/10 backdrop-blur-sm">

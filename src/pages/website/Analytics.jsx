@@ -7,7 +7,7 @@ import {
 import { motion as Motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 
-const Analytics = ({ setIsMobileMenuOpen }) => {
+const Analytics = ({ setIsMobileMenuOpen, userData }) => {
     return (
         <>
             {/* Top Header */}
@@ -73,7 +73,7 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
                         {/* Email Body */}
                         <div className="p-8 pb-10 flex flex-col">
                             <p className="text-red-400 bg-red-500/10 rounded px-2 py-1 inline-block self-start font-medium text-[15px] mb-6 border border-red-500/20">
-                                Dear slama,
+                                Dear {userData?.firstName || 'User'},
                             </p>
 
                             <p className="text-slate-300 text-[15px] leading-relaxed mb-6 max-w-[480px]">
@@ -88,7 +88,7 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
                             </button>
 
                             <div className="text-[15px] text-slate-300">
-                                <p className="mb-0.5">Thank you slama,</p>
+                                <p className="mb-0.5">Thank you {userData?.firstName || 'User'},</p>
                                 <p className="font-bold">The Security Team</p>
                             </div>
                         </div>
@@ -157,7 +157,7 @@ const Analytics = ({ setIsMobileMenuOpen }) => {
                                     <div>
                                         <h4 className="text-white font-bold mb-1.5">Generic Greeting</h4>
                                         <p className="text-sm text-slate-400 leading-relaxed">
-                                            <span className="text-orange-400">"Dear slama"</span> is a massive red flag.
+                                            <span className="text-orange-400">"Dear {userData?.firstName || 'User'}"</span> is a massive red flag.
                                             Legitimate companies will almost always
                                             use your full name in security alerts.
                                         </p>

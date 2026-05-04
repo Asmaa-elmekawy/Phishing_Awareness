@@ -7,11 +7,25 @@ import NavItem from './NavItem';
 import { ROUTES_WEBSITE } from '../../../constants/routes';
 import { useAuth } from '../../../hooks/Admin/useAuth';
 import { useNavigate } from 'react-router-dom';
+import accountService from '../../../services/AdminServices/accountService';
 
 const WebsiteLayout = ({ children }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [userData, setUserData] = useState(null);
     const { logout } = useAuth();
     const navigate = useNavigate();
+
+    React.useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const data = await accountService.getCurrentUser();
+                setUserData(data);
+            } catch (error) {
+                console.error("Failed to fetch user data:", error);
+            }
+        };
+        fetchUserData();
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -66,28 +80,35 @@ const WebsiteLayout = ({ children }) => {
                 {/* User Profile */}
                 <div className="p-4 m-4 rounded-xl bg-slate-800/30 border border-slate-700/50 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden flex-shrink-0">
-                        <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Profile" className="w-full h-full object-cover" />
+                        {userData?.profileImage ? (
+                            <img
+                                src={userData.profileImage.startsWith('http')
+                                    ? userData.profileImage
+                                    : `https://phish-escape.runasp.net/${userData.profileImage.startsWith('/') ? userData.profileImage.slice(1) : userData.profileImage}`}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-slate-800">
+                                <User size={20} className="text-slate-500" />
+                            </div>
+                        )}
                     </div>
                     <div className="flex flex-col min-w-0">
-                        <span className="text-sm font-semibold text-white truncate">Slama Analyst</span>
-                        <span className="text-xs text-blue-400 truncate">Lvl 14 Security</span>
+                        <span className="text-sm font-semibold text-white truncate">
+                            {userData?.firstName || 'User'} Analyst
+                        </span>
+                        <span className="text-xs text-blue-400 truncate">Lvl 14 secuirty</span>
                     </div>
                 </div>
             </aside>
 
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-                {/* Mobile Menu Toggle (Only visible and functional on mobile if layout doesn't have its own header) */}
-                {/* 
-                  Note: Some pages have their own headers. 
-                  We can provide a way to toggle the sidebar from children, 
-                  or have a standard header here.
-                  For now, we'll allow pages to have their own headers but provide the toggle function via context or props if needed.
-                  Actually, let's pass setIsMobileMenuOpen to children components if they need it.
-                */}
+
                 {React.Children.map(children, child => {
                     if (React.isValidElement(child)) {
-                        return React.cloneElement(child, { setIsMobileMenuOpen });
+                        return React.cloneElement(child, { setIsMobileMenuOpen, userData });
                     }
                     return child;
                 })}

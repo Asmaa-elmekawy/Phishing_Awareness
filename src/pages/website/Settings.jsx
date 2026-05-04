@@ -1,16 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     Lock, ShieldCheck, Monitor, Smartphone, Moon, Mail,
-    LogOut, Award, ChevronRight, Edit2, Menu
+    LogOut, Award, ChevronRight, Edit2, Menu, User
 } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ROUTES_WEBSITE } from '../../constants/routes';
+import accountService from '../../services/AdminServices/accountService';
 
-const Settings = ({ setIsMobileMenuOpen }) => {
+const Settings = ({ setIsMobileMenuOpen, userData: initialUserData }) => {
+    const [userData, setUserData] = useState(initialUserData);
+    const [loading, setLoading] = useState(!initialUserData);
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
+    const [passwordStatus, setPasswordStatus] = useState({ type: '', message: '' });
+
+    const fileInputRef = useRef(null);
+
     const [darkMode, setDarkMode] = useState(() => {
         return localStorage.getItem('theme') !== 'light';
     });
+
+    React.useEffect(() => {
+        if (initialUserData) {
+            setUserData(initialUserData);
+            setLoading(false);
+            return;
+        }
+        
+        const fetchUserData = async () => {
+            try {
+                const data = await accountService.getCurrentUser();
+                setUserData(data);
+            } catch (error) {
+                console.error("Failed to fetch user data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUserData();
+    }, [initialUserData]);
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            setLoading(true);
+            await accountService.uploadProfileImage(file);
+            const data = await accountService.getCurrentUser();
+            setUserData(data);
+        } catch (error) {
+            console.error("Failed to upload image:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     React.useEffect(() => {
         if (darkMode) {
@@ -67,20 +116,96 @@ const Settings = ({ setIsMobileMenuOpen }) => {
                             </div>
 
                             <div className="space-y-4">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-[#151b2d] rounded-2xl border border-slate-800/80 gap-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-slate-800/50 flex items-center justify-center shrink-0">
-                                            <Lock size={18} className="text-slate-400" />
+                                {isChangingPassword ? (
+                                    <Motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        className="p-5 bg-[#151b2d] rounded-2xl border border-blue-500/30 space-y-4"
+                                    >
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h3 className="font-semibold text-sm">Change Password</h3>
+                                            <button
+                                                onClick={() => {
+                                                    setIsChangingPassword(false);
+                                                    setPasswordStatus({ type: '', message: '' });
+                                                }}
+                                                className="text-xs text-slate-500 hover:text-white"
+                                            >
+                                                Cancel
+                                            </button>
                                         </div>
-                                        <div>
-                                            <div className="font-semibold text-sm">Password</div>
-                                            <div className="text-xs text-slate-400">Last changed 3 months ago</div>
+
+                                        <div className="grid grid-cols-1 gap-3">
+                                            <input
+                                                type="password"
+                                                placeholder="Current Password"
+                                                className="w-full bg-[#0a0f1d] border border-slate-800 rounded-xl px-4 py-2 text-sm focus:border-blue-500 outline-none transition-colors"
+                                                value={passwordData.oldPassword}
+                                                onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+                                            />
+                                            <input
+                                                type="password"
+                                                placeholder="New Password"
+                                                className="w-full bg-[#0a0f1d] border border-slate-800 rounded-xl px-4 py-2 text-sm focus:border-blue-500 outline-none transition-colors"
+                                                value={passwordData.newPassword}
+                                                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                            />
+                                            <input
+                                                type="password"
+                                                placeholder="Confirm New Password"
+                                                className="w-full bg-[#0a0f1d] border border-slate-800 rounded-xl px-4 py-2 text-sm focus:border-blue-500 outline-none transition-colors"
+                                                value={passwordData.confirmPassword}
+                                                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                                            />
                                         </div>
+
+                                        {passwordStatus.message && (
+                                            <div className={`text-xs p-2 rounded-lg ${passwordStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                                                {passwordStatus.message}
+                                            </div>
+                                        )}
+
+                                        <button
+                                            onClick={async () => {
+                                                if (passwordData.newPassword !== passwordData.confirmPassword) {
+                                                    setPasswordStatus({ type: 'error', message: 'Passwords do not match' });
+                                                    return;
+                                                }
+                                                try {
+                                                    await accountService.changePassword({
+                                                        CurrentPassword: passwordData.oldPassword,
+                                                        newPassword: passwordData.newPassword
+                                                    });
+                                                    setPasswordStatus({ type: 'success', message: 'Password changed successfully' });
+                                                    setTimeout(() => setIsChangingPassword(false), 2000);
+                                                } catch (error) {
+                                                    setPasswordStatus({ type: 'error', message: error.message || 'Failed to change password' });
+                                                }
+                                            }}
+                                            className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold transition-colors"
+                                        >
+                                            Update Password
+                                        </button>
+                                    </Motion.div>
+                                ) : (
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-[#151b2d] rounded-2xl border border-slate-800/80 gap-4">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-800/50 flex items-center justify-center shrink-0">
+                                                <Lock size={18} className="text-slate-400" />
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold text-sm">Password</div>
+                                                <div className="text-xs text-slate-400">Update your account security</div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setIsChangingPassword(true)}
+                                            className="px-5 py-2 text-sm font-medium bg-[#1c2436] hover:bg-[#252d42] border border-slate-700/50 rounded-xl transition-colors"
+                                        >
+                                            Change
+                                        </button>
                                     </div>
-                                    <button className="px-5 py-2 text-sm font-medium bg-[#1c2436] hover:bg-[#252d42] border border-slate-700/50 rounded-xl transition-colors">
-                                        Change
-                                    </button>
-                                </div>
+                                )}
 
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-[#151b2d] rounded-2xl border border-slate-800/80 gap-4">
                                     <div className="flex items-center gap-4">
@@ -229,19 +354,42 @@ const Settings = ({ setIsMobileMenuOpen }) => {
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full pointer-events-none" />
 
                             <div className="relative mb-4">
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                />
                                 <div className="w-24 h-24 rounded-full bg-white shadow-[inset_0_-8px_16px_rgba(0,0,0,0.1),_0_8px_16px_rgba(0,0,0,0.2)] border-4 border-[#111827] z-10 relative">
-                                    {/* Placeholder avatar logic or image */}
                                     <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
-                                        <div className="w-[80%] h-[80%] bg-slate-200 rounded-full" />
+                                        {userData?.profileImage ? (
+                                            <img 
+                                                src={userData.profileImage.startsWith('http') 
+                                                    ? userData.profileImage 
+                                                    : `https://phish-escape.runasp.net/${userData.profileImage.startsWith('/') ? userData.profileImage.slice(1) : userData.profileImage}`} 
+                                                alt="Profile" 
+                                                className="w-full h-full object-cover" 
+                                            />
+                                        ) : (
+                                            <div className="w-[80%] h-[80%] bg-slate-200 rounded-full flex items-center justify-center">
+                                                <User size={30} className="text-slate-400" />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center border-2 border-[#111827] hover:bg-blue-600 transition-colors z-20 shadow-lg">
+                                <button
+                                    onClick={() => fileInputRef.current.click()}
+                                    className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center border-2 border-[#111827] hover:bg-blue-600 transition-colors z-20 shadow-lg"
+                                >
                                     <Edit2 size={12} />
                                 </button>
                             </div>
 
-                            <h3 className="text-xl font-bold text-white mb-1">Slama</h3>
-                            <p className="text-[10px] uppercase tracking-widest text-blue-500 font-bold mb-6">Security Analyst</p>
+                            <h3 className="text-xl font-bold text-white mb-1">
+                                {userData ? `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User' : 'Loading...'}
+                            </h3>
+                            <p className="text-[10px] uppercase tracking-widest text-blue-500 font-bold mb-6">{userData?.role || 'Security Analyst'}</p>
 
                             <div className="w-full h-px bg-slate-800/60 mb-6" />
 

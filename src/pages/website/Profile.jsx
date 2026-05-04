@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Mail,
     History,
@@ -12,13 +12,16 @@ import {
     CheckCircle2,
     Lock,
     RotateCcw,
-    Menu
+    Menu,
+    User
 } from 'lucide-react';
+import accountService from '../../services/AdminServices/accountService';
 
 const Profile = ({ setIsMobileMenuOpen }) => {
     const riskScore = 72;
     const circumference = 2 * Math.PI * 34; // r=34
     const offset = circumference - (riskScore / 100) * circumference;
+    const [userData, setUserData] = useState(null);
 
     const simulations = [
         { id: 1, title: 'Urgent Invoice Phish', date: 'October 14, 2023 • 09:42 AM', status: 'clicked', color: 'text-red-500', bg: 'bg-red-500', desc: '*Subject: Urgent: Overdue Payment for Q3 Cloud Services*' },
@@ -33,6 +36,18 @@ const Profile = ({ setIsMobileMenuOpen }) => {
         { id: 3, name: 'Advanced Business Email Compromise', status: 'locked' },
         { id: 4, name: 'Remote Work Security Basics', status: 'locked' },
     ];
+
+    React.useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const data = await accountService.getCurrentUser();
+                setUserData(data);
+            } catch (error) {
+                console.error("Failed to fetch user data:", error);
+            }
+        };
+        fetchUserData();
+    }, []);
 
     return (
         <div className="p-8 h-full overflow-y-auto bg-cyber-bg text-cyber-text-muted">
@@ -50,15 +65,24 @@ const Profile = ({ setIsMobileMenuOpen }) => {
             <header className="bg-cyber-surface/40 border border-cyber-border/50 rounded-3xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 backdrop-blur-md">
                 <div className="flex items-center gap-6">
                     <div className="relative w-20 h-20">
-                        <img
-                            src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                            alt="Mohamed salama"
-                            className="w-full h-full rounded-full object-cover border-4 border-cyber-primary/30"
-                        />
+                        {userData?.profileImage ? (
+                            <img
+                                src={userData.profileImage.startsWith('http')
+                                    ? userData.profileImage
+                                    : `https://phish-escape.runasp.net/${userData.profileImage.startsWith('/') ? userData.profileImage.slice(1) : userData.profileImage}`}
+                                alt="Profile"
+                                className="w-full h-full rounded-full object-cover border-4 border-cyber-primary/30"
+                            />
+                        ) : (
+                            <div className="w-full h-full rounded-full flex items-center justify-center object-cover border-4 border-cyber-primary/30">
+                                <User size={20} className="text-slate-500" />
+                            </div>
+                        )}
                         <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-red-500 border-2 border-cyber-bg rounded-full"></div>
+
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-cyber-text mb-1">Mohamed salama's Profile</h1>
+                        <h1 className="text-2xl font-bold text-cyber-text mb-1">{userData?.firstName} {userData?.lastName}'s Profile</h1>
                         <div className="flex items-center gap-2 text-sm">
                             <span className="bg-cyber-primary/10 text-cyber-primary px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider">Sales Department</span>
                             <span className="text-cyber-text-muted/60">•</span>

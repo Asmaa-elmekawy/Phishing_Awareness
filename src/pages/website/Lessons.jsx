@@ -3,8 +3,6 @@ import {
     Menu, Search, Bell, AtSign, Play, Bookmark,
     Link as LinkIcon, AlertCircle, Paperclip, Lock,
     Flame, Medal, Shield, Search as SearchIcon, Eye,
-    MessageSquare,
-    ShieldCheck,
     ShieldCheckIcon,
     Bot,
     BookOpen
@@ -192,7 +190,7 @@ const Lessons = ({ setIsMobileMenuOpen }) => {
                                         <h3 className="font-bold mb-1">{lesson.title || 'Untitled Module'}</h3>
                                         <p className="text-xs text-slate-400 mb-6">{lesson.description || `${lesson.topic || 'Topic'} • ${lesson.duration || '15 mins'}`}</p>
 
-                                        <button 
+                                        <button
                                             onClick={() => navigate(ROUTES_WEBSITE.LESSON_QUESTIONS.replace(':lessonId', lesson.lessonId))}
                                             className="mt-auto w-full py-2.5 bg-slate-800/30 hover:bg-slate-800 border border-slate-700/50 text-slate-300 text-sm font-bold rounded-xl transition-all"
                                         >
@@ -281,7 +279,7 @@ const Lessons = ({ setIsMobileMenuOpen }) => {
 
             {/* Floating Bot Button */}
             <div className="absolute bottom-6 right-6 z-20 hidden md:block">
-                <button className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/30 hover:scale-105 transition-transform">
+                <button onClick={() => navigate(ROUTES_WEBSITE.AI)} className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/30 hover:scale-105 transition-transform">
                     <Bot size={24} className="text-white" />
                 </button>
             </div>
